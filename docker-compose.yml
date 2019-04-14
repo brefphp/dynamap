@@ -1,0 +1,9 @@
+version: '3'
+services:
+    dynamodb:
+        image: amazon/dynamodb-local
+        ports:
+            - '8000:8000'
+        # `-jar DynamoDBLocal.jar` is necessary for the `command` option to work
+        # For the rest see https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.UsageNotes.html
+        command: '-jar DynamoDBLocal.jar -inMemory'
