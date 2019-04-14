@@ -13,8 +13,8 @@ class Mapping
 
     public function __construct(array $mappingConfig)
     {
-        $phpDocExtractor = new PhpDocExtractor();
-        $reflectionExtractor = new ReflectionExtractor();
+        $phpDocExtractor = new PhpDocExtractor;
+        $reflectionExtractor = new ReflectionExtractor;
         $listExtractors = [$reflectionExtractor];
         $typeExtractors = [$phpDocExtractor, $reflectionExtractor];
         $descriptionExtractors = [$phpDocExtractor];

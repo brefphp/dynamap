@@ -36,6 +36,9 @@ class FieldMapping
         return $this->name;
     }
 
+    /**
+     * @return mixed
+     */
     public function readFieldValue(array $item, string $fieldName)
     {
         $rawDynamoDbValue = $item[$fieldName][$this->dynamoDbType()];
@@ -43,10 +46,13 @@ class FieldMapping
         return $this->castValueFromDynamoDbFormat($rawDynamoDbValue);
     }
 
+    /**
+     * @param mixed $fieldValue
+     */
     public function dynamoDbQueryValue($fieldValue): array
     {
         return [
-            $this->dynamoDbType() => $this->castValueForDynamoDbFormat($fieldValue)
+            $this->dynamoDbType() => $this->castValueForDynamoDbFormat($fieldValue),
         ];
     }
 
@@ -55,6 +61,10 @@ class FieldMapping
         return $this->dynamoDbType;
     }
 
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
     private function castValueForDynamoDbFormat($value)
     {
         switch ($this->dynamoDbType()) {
@@ -70,6 +80,10 @@ class FieldMapping
         }
     }
 
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
     private function castValueFromDynamoDbFormat($value)
     {
         switch ($this->dynamoDbType()) {

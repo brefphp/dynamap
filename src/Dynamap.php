@@ -18,7 +18,7 @@ class Dynamap
         $this->mappingObj = new Mapping($mapping);
     }
 
-    public static function fromOptions(array $options, array $mapping)
+    public static function fromOptions(array $options, array $mapping): self
     {
         $options['version'] = $options['version'] ?? 'latest';
 
@@ -36,8 +36,11 @@ class Dynamap
 
     /**
      * Get item by primary key.
+     *
+     * @param int|string|array $key
+     * @throws \Exception
      */
-    public function get(string $table, $key)
+    public function get(string $table, $key): object
     {
         $tableMapping = $this->mappingObj->getTableMapping($table);
 
@@ -81,6 +84,16 @@ class Dynamap
         ]);
     }
 
+    /**
+     * Update only specific fields for an item.
+     *
+     * Warning: if the item has been loaded as a PHP object, the PHP object will not be updated.
+     * If you want it to be updated you will need to reload it from database.
+     *
+     * @param int|string|array $itemKey
+     * @param array $values Key-value map
+     * @throws \Exception
+     */
     public function partialUpdate(string $table, $itemKey, array $values): void
     {
         $tableMapping = $this->mappingObj->getTableMapping($table);
@@ -120,7 +133,7 @@ class Dynamap
         $object = $class->newInstanceWithoutConstructor();
 
         foreach ($item as $fieldName => $fieldData) {
-            if (!$tableMapping->hasFieldOrKey($fieldName)) {
+            if (! $tableMapping->hasFieldOrKey($fieldName)) {
                 continue;
             }
             $fieldMapping = $tableMapping->getFieldMapping($fieldName);
@@ -133,6 +146,10 @@ class Dynamap
         return $object;
     }
 
+    /**
+     * @param int|string|array $key
+     * @throws \Exception
+     */
     private function buildKeyQuery($key, TableMapping $tableMapping): array
     {
         $keyQuery = [];
