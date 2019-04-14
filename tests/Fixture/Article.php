@@ -13,9 +13,13 @@ class Article
     /** @var bool */
     private $published = false;
 
+    /** @var \DateTimeImmutable */
+    private $createdAt;
+
     public function __construct(int $id)
     {
         $this->id = $id;
+        $this->createdAt = new \DateTimeImmutable;
     }
 
     public function getId(): int
@@ -41,5 +45,10 @@ class Article
     public function isPublished(): bool
     {
         return $this->published;
+    }
+
+    public function getCreationDate(): \DateTimeImmutable
+    {
+        return $this->createdAt;
     }
 }

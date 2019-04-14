@@ -135,4 +135,16 @@ class DynamapTest extends TestCase
         $article = $this->dynamap->get('articles', 123);
         $this->assertTrue($article->isPublished());
     }
+
+    public function test date attribute(): void
+    {
+        $this->dynamap->save(new Article(123));
+
+        /** @var Article $article */
+        $article = $this->dynamap->get('articles', 123);
+
+        $article->setName('Hello John!');
+
+        $this->assertEqualsWithDelta(new \DateTimeImmutable, $article->getCreationDate(), 1);
+    }
 }

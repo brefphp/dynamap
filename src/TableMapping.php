@@ -2,6 +2,11 @@
 
 namespace Dynamap;
 
+use Dynamap\Field\BooleanField;
+use Dynamap\Field\DateTimeField;
+use Dynamap\Field\Field;
+use Dynamap\Field\IntegerField;
+use Dynamap\Field\StringField;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
 
 class TableMapping
@@ -12,9 +17,9 @@ class TableMapping
     private $tableName;
     /** @var string */
     private $className;
-    /** @var FieldMapping[] */
+    /** @var Field[] */
     private $keys = [];
-    /** @var FieldMapping[] */
+    /** @var Field[] */
     private $fields = [];
 
     public function __construct(PropertyInfoExtractorInterface $propertyInfo, string $tableName, array $mappingConfig)
@@ -37,7 +42,7 @@ class TableMapping
     }
 
     /**
-     * @return FieldMapping[]
+     * @return Field[]
      */
     public function getKeyMapping(): array
     {
@@ -50,14 +55,14 @@ class TableMapping
     }
 
     /**
-     * @return FieldMapping[]
+     * @return Field[]
      */
     public function getFieldsMapping(): array
     {
         return $this->fields;
     }
 
-    public function getFieldMapping(string $fieldName): FieldMapping
+    public function getFieldMapping(string $fieldName): Field
     {
         return $this->fields[$fieldName] ?? $this->keys[$fieldName];
     }
@@ -88,13 +93,24 @@ class TableMapping
             $propertyType = $propertyTypes[0];
             switch ($propertyType->getBuiltinType()) {
                 case 'string':
-                    $fieldMapping = FieldMapping::stringField($property);
+                    $fieldMapping = new StringField($property);
                     break;
                 case 'int':
-                    $fieldMapping = FieldMapping::intField($property);
+                    $fieldMapping = new IntegerField($property);
                     break;
                 case 'bool':
-                    $fieldMapping = FieldMapping::boolField($property);
+                    $fieldMapping = new BooleanField($property);
+                    break;
+                case 'object':
+                    switch ($propertyType->getClassName()) {
+                        case \DateTime::class:
+                        case \DateTimeImmutable::class:
+                        case \DateTimeInterface::class:
+                            $fieldMapping = new DateTimeField($property);
+                            break;
+                        default:
+                            throw new \Exception("Unsupported type {$propertyType->getClassName()} for {$className}::\${$property}");
+                    }
                     break;
                 default:
                     throw new \Exception("Unsupported type {$propertyType->getBuiltinType()} for {$className}::\${$property}");
