@@ -17,8 +17,11 @@ class DynamapTest extends TestCase
     {
         $dynamoDb = new DynamoDbClient([
             'version' => 'latest',
-            'region' => 'us-east-1',
             'endpoint' => 'http://localhost:8000/',
+            // DynamoDB local requires those parameters, even with random values
+            'region' => 'us-east-1',
+            'key' => 'FAKE_KEY',
+            'secret' => 'FAKE_SECRET',
         ]);
 
         try {
