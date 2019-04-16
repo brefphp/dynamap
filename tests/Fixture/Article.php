@@ -16,6 +16,9 @@ class Article
     /** @var \DateTimeImmutable */
     private $createdAt;
 
+    /** @var \DateTimeImmutable|null */
+    private $publishedAt;
+
     public function __construct(int $id)
     {
         $this->id = $id;
@@ -40,6 +43,13 @@ class Article
     public function publish(): void
     {
         $this->published = true;
+        $this->publishedAt = new \DateTimeImmutable;
+    }
+
+    public function unpublish()
+    {
+        $this->published = false;
+        $this->publishedAt = null;
     }
 
     public function isPublished(): bool
@@ -50,5 +60,15 @@ class Article
     public function getCreationDate(): \DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function setPublicationDate(?\DateTimeImmutable $publishedAt): void
+    {
+        $this->publishedAt = $publishedAt;
+    }
+
+    public function getPublicationDate(): ?\DateTimeImmutable
+    {
+        return $this->publishedAt;
     }
 }

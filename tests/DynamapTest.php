@@ -143,8 +143,28 @@ class DynamapTest extends TestCase
         /** @var Article $article */
         $article = $this->dynamap->get('articles', 123);
 
-        $article->setName('Hello John!');
+        $this->assertEqualsWithDelta(new \DateTimeImmutable, $article->getCreationDate(), 5);
+    }
 
-        $this->assertEqualsWithDelta(new \DateTimeImmutable, $article->getCreationDate(), 1);
+    public function test nullable date attribute(): void
+    {
+        // Test it works with a default null value
+        $this->dynamap->save(new Article(123));
+        /** @var Article $article */
+        $article = $this->dynamap->get('articles', 123);
+        $this->assertNull($article->getPublicationDate());
+
+        // Test that it works when we set a value
+        $article->publish();
+        $this->dynamap->save($article);
+        /** @var Article $article */
+        $article = $this->dynamap->get('articles', 123);
+        $this->assertEqualsWithDelta(new \DateTimeImmutable, $article->getPublicationDate(), 5);
+
+        // And it still works when we set null again
+        $article->unpublish();
+        $this->dynamap->save($article);
+        $article = $this->dynamap->get('articles', 123);
+        $this->assertNull($article->getPublicationDate());
     }
 }
