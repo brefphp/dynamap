@@ -24,6 +24,13 @@ $myObject = $dynamap->get('table', 'key');
 $objects = $dynamap->getAll('table');
 ```
 
+Supported field types:
+
+- string
+- integer
+- bool
+- `DateTimeImmutable` (stored as string)
+
 ## Contributing
 
 To run tests locally:

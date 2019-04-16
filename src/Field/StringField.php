@@ -9,11 +9,17 @@ class StringField extends Field
         return 'S';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function castValueForDynamoDbFormat($value): string
     {
         return (string) $value;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function castValueFromDynamoDbFormat($value): string
     {
         return (string) $value;

@@ -6,9 +6,13 @@ class DateTimeField extends Field
 {
     public function dynamoDbType(): string
     {
+        // Dates are stored as strings
         return 'S';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function castValueForDynamoDbFormat($value): string
     {
         if (! $value instanceof \DateTimeInterface) {
@@ -18,6 +22,9 @@ class DateTimeField extends Field
         return $value->format(\DateTimeInterface::ATOM);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function castValueFromDynamoDbFormat($value): \DateTimeInterface
     {
         return \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $value);
