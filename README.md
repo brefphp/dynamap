@@ -28,6 +28,7 @@ Supported field types:
 
 - string
 - integer
+- float
 - bool
 - `DateTimeImmutable` (stored as string)
 
