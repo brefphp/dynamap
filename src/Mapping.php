@@ -2,6 +2,7 @@
 
 namespace Dynamap;
 
+use Dynamap\Exception\TableNotFound;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -35,6 +36,10 @@ class Mapping
 
     public function getTableMapping(string $table): TableMapping
     {
+        if (! isset($this->tables[$table])) {
+            throw new TableNotFound("The table `$table` is not configured in Dynamap");
+        }
+
         return $this->tables[$table];
     }
 
@@ -46,6 +51,6 @@ class Mapping
             }
         }
 
-        throw new \Exception("No table mapping for for class $className");
+        throw new TableNotFound("No table mapping found for class `$className`");
     }
 }

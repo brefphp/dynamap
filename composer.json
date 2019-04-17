@@ -16,6 +16,7 @@
     },
     "require": {
         "php": "^7.2",
+        "ext-json": "*",
         "aws/aws-sdk-php": "^3.91",
         "symfony/property-info": "^4.2"
     },

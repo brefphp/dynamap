@@ -5,6 +5,8 @@ namespace Dynamap\Test;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Dynamap\Dynamap;
+use Dynamap\Exception\ItemNotFound;
+use Dynamap\Exception\TableNotFound;
 use Dynamap\Test\Fixture\Article;
 use PHPUnit\Framework\TestCase;
 
@@ -61,6 +63,12 @@ class DynamapTest extends TestCase
                     'id',
                 ],
             ],
+            'foo' => [ // This is a table that doesn't exist
+                'class' => Article::class,
+                'keys' => [
+                    'id',
+                ],
+            ],
         ];
         $this->dynamap = new Dynamap($dynamoDb, $mapping);
     }
@@ -87,6 +95,30 @@ class DynamapTest extends TestCase
         $this->dynamap->save(new Article(789));
 
         $this->assertCount(3, $this->dynamap->getAll('articles'));
+    }
+
+    public function test get unknown object(): void
+    {
+        $this->expectException(ItemNotFound::class);
+        $this->expectExceptionMessage('Item `Dynamap\Test\Fixture\Article` not found for key 123');
+
+        $this->dynamap->get('articles', 123);
+    }
+
+    public function test get table that is mapped but doesnt exist in DynamoDB(): void
+    {
+        $this->expectException(TableNotFound::class);
+        $this->expectExceptionMessage('Cannot find the table `foo` in DynamoDB: make sure it exists and that the code has permissions to access it');
+
+        $this->dynamap->get('foo', 123);
+    }
+
+    public function test get unknown table(): void
+    {
+        $this->expectException(TableNotFound::class);
+        $this->expectExceptionMessage('The table `bar` is not configured in Dynamap');
+
+        $this->dynamap->get('bar', 123);
     }
 
     public function test string attribute(): void

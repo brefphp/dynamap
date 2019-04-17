@@ -3,6 +3,9 @@
 namespace Dynamap;
 
 use Aws\DynamoDb\DynamoDbClient;
+use Aws\DynamoDb\Exception\DynamoDbException;
+use Dynamap\Exception\ItemNotFound;
+use Dynamap\Exception\TableNotFound;
 
 class Dynamap
 {
@@ -38,16 +41,28 @@ class Dynamap
      * Get item by primary key.
      *
      * @param int|string|array $key
-     * @throws \Exception
+     * @throws \InvalidArgumentException If the key is invalid.
+     * @throws ItemNotFound If the item cannot be found.
      */
     public function get(string $table, $key): object
     {
         $tableMapping = $this->mappingObj->getTableMapping($table);
 
-        $item = $this->dynamoDb->getItem([
-            'TableName' => $table,
-            'Key' => $this->buildKeyQuery($key, $tableMapping),
-        ])['Item'];
+        try {
+            $item = $this->dynamoDb->getItem([
+                'TableName' => $table,
+                'Key' => $this->buildKeyQuery($key, $tableMapping),
+            ])['Item'];
+        } catch (DynamoDbException $e) {
+            if ($e->getAwsErrorCode() === 'ResourceNotFoundException') {
+                throw TableNotFound::tableMissingInDynamoDb($table, $e);
+            }
+            throw $e;
+        }
+
+        if ($item === null) {
+            throw ItemNotFound::fromKey($tableMapping->getClassName(), $key);
+        }
 
         return $this->map($item, $table);
     }
@@ -148,14 +163,14 @@ class Dynamap
 
     /**
      * @param int|string|array $key
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     private function buildKeyQuery($key, TableMapping $tableMapping): array
     {
         $keyQuery = [];
         if (! is_array($key)) {
             if ($tableMapping->isCompositeKey()) {
-                throw new \Exception('The key is a composite key and only a single value was provided');
+                throw new \InvalidArgumentException('The key is a composite key and only a single value was provided');
             }
             foreach ($tableMapping->getKeyMapping() as $fieldMapping) {
                 $keyQuery[$fieldMapping->name()] = $fieldMapping->dynamoDbQueryValue($key);
@@ -164,7 +179,7 @@ class Dynamap
             foreach ($tableMapping->getKeyMapping() as $fieldMapping) {
                 $fieldName = $fieldMapping->name();
                 if (! isset($key[$fieldName])) {
-                    throw new \Exception('The key is incomplete');
+                    throw new \InvalidArgumentException('The key is incomplete');
                 }
                 $keyQuery[$fieldName] = $fieldMapping->dynamoDbQueryValue($key[$fieldName]);
             }
