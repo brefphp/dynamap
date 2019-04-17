@@ -97,6 +97,11 @@ class DynamapTest extends TestCase
         $this->assertCount(3, $this->dynamap->getAll('articles'));
     }
 
+    public function test find unknown object(): void
+    {
+        $this->assertNull($this->dynamap->find('articles', 123));
+    }
+
     public function test get unknown object(): void
     {
         $this->expectException(ItemNotFound::class);

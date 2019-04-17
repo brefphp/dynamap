@@ -20,7 +20,10 @@ $dynamap = Dynamap::fromOptions([
 ], $mapping);
 
 $dynamap->save($myObject);
-$myObject = $dynamap->get('table', 'key');
+
+$myObject = $dynamap->find('table', 'key');
+$myObject = $dynamap->get('table', 'key'); // Same as `find()` but throws an exception if not found
+
 $objects = $dynamap->getAll('table');
 ```
 

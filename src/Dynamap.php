@@ -40,11 +40,33 @@ class Dynamap
     /**
      * Get item by primary key.
      *
+     * Throws an exception if the item cannot be found (see `find()` as an alternative).
+     *
      * @param int|string|array $key
      * @throws \InvalidArgumentException If the key is invalid.
      * @throws ItemNotFound If the item cannot be found.
      */
     public function get(string $table, $key): object
+    {
+        $item = $this->find($table, $key);
+
+        if ($item === null) {
+            $tableMapping = $this->mappingObj->getTableMapping($table);
+            throw ItemNotFound::fromKey($tableMapping->getClassName(), $key);
+        }
+
+        return $item;
+    }
+
+    /**
+     * Find an item by primary key.
+     *
+     * Returns null if the item cannot be found (see `get()` as an alternative).
+     *
+     * @param int|string|array $key
+     * @throws \InvalidArgumentException If the key is invalid.
+     */
+    public function find(string $table, $key): ?object
     {
         $tableMapping = $this->mappingObj->getTableMapping($table);
 
@@ -61,7 +83,7 @@ class Dynamap
         }
 
         if ($item === null) {
-            throw ItemNotFound::fromKey($tableMapping->getClassName(), $key);
+            return null;
         }
 
         return $this->map($item, $table);
