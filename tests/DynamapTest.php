@@ -101,6 +101,16 @@ class DynamapTest extends TestCase
         $this->assertEquals('Hello world!', $article->getName());
     }
 
+    public function test float attribute(): void
+    {
+        $this->dynamap->save(new Article(123));
+
+        /** @var Article $article */
+        $article = $this->dynamap->get('articles', 123);
+
+        $this->assertEquals(5., $article->getRating());
+    }
+
     public function test update existing object(): void
     {
         $article = new Article(123);

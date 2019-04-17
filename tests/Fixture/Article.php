@@ -10,6 +10,9 @@ class Article
     /** @var string|null */
     private $name;
 
+    /** @var float */
+    private $rating = 5.;
+
     /** @var bool */
     private $published = false;
 
@@ -38,6 +41,11 @@ class Article
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    public function getRating(): float
+    {
+        return $this->rating;
     }
 
     public function publish(): void

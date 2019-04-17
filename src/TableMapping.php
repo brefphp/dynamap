@@ -5,6 +5,7 @@ namespace Dynamap;
 use Dynamap\Field\BooleanField;
 use Dynamap\Field\DateTimeField;
 use Dynamap\Field\Field;
+use Dynamap\Field\FloatField;
 use Dynamap\Field\IntegerField;
 use Dynamap\Field\StringField;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
@@ -97,6 +98,9 @@ class TableMapping
                     break;
                 case 'int':
                     $fieldMapping = new IntegerField($property);
+                    break;
+                case 'float':
+                    $fieldMapping = new FloatField($property);
                     break;
                 case 'bool':
                     $fieldMapping = new BooleanField($property);
