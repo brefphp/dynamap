@@ -21,10 +21,23 @@ $dynamap = Dynamap::fromOptions([
 
 $dynamap->save($myObject);
 
-$myObject = $dynamap->find('table', 'key');
-$myObject = $dynamap->get('table', 'key'); // Same as `find()` but throws an exception if not found
+$myObject = $dynamap->find(MyClass::class, 'key');
+$myObject = $dynamap->get(MyClass::class, 'key'); // Same as `find()` but throws an exception if not found
 
-$objects = $dynamap->getAll('table');
+$objects = $dynamap->getAll(MyClass::class);
+```
+
+Mapping example:
+
+```php
+$mapping = [
+    Article::class => [
+        'table' => 'articles',
+        'keys' => [
+            'id',
+        ],
+    ],
+];
 ```
 
 Supported field types:

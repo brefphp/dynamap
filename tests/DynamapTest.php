@@ -57,14 +57,20 @@ class DynamapTest extends TestCase
         ]);
 
         $mapping = [
-            'articles' => [
-                'class' => Article::class,
+            Article::class => [
+                'table' => 'articles',
                 'keys' => [
                     'id',
                 ],
             ],
-            'foo' => [ // This is a table that doesn't exist
-                'class' => Article::class,
+            'UnknownClass' => [ // This is a class that doesn't exist
+                'table' => 'articles',
+                'keys' => [
+                    'id',
+                ],
+            ],
+            \stdClass::class => [
+                'table' => 'foo', // This is a table that doesn't exist
                 'keys' => [
                     'id',
                 ],
@@ -78,14 +84,14 @@ class DynamapTest extends TestCase
         $this->dynamap->save(new Article(123));
 
         /** @var Article $article */
-        $article = $this->dynamap->get('articles', 123);
+        $article = $this->dynamap->get(Article::class, 123);
 
         $this->assertEquals(123, $article->getId());
     }
 
     public function test get empty table(): void
     {
-        $this->assertEmpty($this->dynamap->getAll('articles'));
+        $this->assertEmpty($this->dynamap->getAll(Article::class));
     }
 
     public function test get all(): void
@@ -94,12 +100,12 @@ class DynamapTest extends TestCase
         $this->dynamap->save(new Article(456));
         $this->dynamap->save(new Article(789));
 
-        $this->assertCount(3, $this->dynamap->getAll('articles'));
+        $this->assertCount(3, $this->dynamap->getAll(Article::class));
     }
 
     public function test find unknown object(): void
     {
-        $this->assertNull($this->dynamap->find('articles', 123));
+        $this->assertNull($this->dynamap->find(Article::class, 123));
     }
 
     public function test get unknown object(): void
@@ -107,7 +113,14 @@ class DynamapTest extends TestCase
         $this->expectException(ItemNotFound::class);
         $this->expectExceptionMessage('Item `Dynamap\Test\Fixture\Article` not found for key 123');
 
-        $this->dynamap->get('articles', 123);
+        $this->dynamap->get(Article::class, 123);
+    }
+
+    public function test with unknown class(): void
+    {
+        $this->expectExceptionMessage('The class `UnknownClass` doesn\'t exist');
+
+        $this->dynamap->get('UnknownClass', 123);
     }
 
     public function test get table that is mapped but doesnt exist in DynamoDB(): void
@@ -115,15 +128,15 @@ class DynamapTest extends TestCase
         $this->expectException(TableNotFound::class);
         $this->expectExceptionMessage('Cannot find the table `foo` in DynamoDB: make sure it exists and that the code has permissions to access it');
 
-        $this->dynamap->get('foo', 123);
+        $this->dynamap->get(\stdClass::class, 123);
     }
 
-    public function test get unknown table(): void
+    public function test get unknown class(): void
     {
         $this->expectException(TableNotFound::class);
-        $this->expectExceptionMessage('The table `bar` is not configured in Dynamap');
+        $this->expectExceptionMessage('No table mapping found for class `Foo`');
 
-        $this->dynamap->get('bar', 123);
+        $this->dynamap->get('Foo', 123);
     }
 
     public function test string attribute(): void
@@ -133,7 +146,7 @@ class DynamapTest extends TestCase
         $this->dynamap->save($article);
 
         /** @var Article $article */
-        $article = $this->dynamap->get('articles', 123);
+        $article = $this->dynamap->get(Article::class, 123);
 
         $this->assertEquals('Hello world!', $article->getName());
     }
@@ -143,7 +156,7 @@ class DynamapTest extends TestCase
         $this->dynamap->save(new Article(123));
 
         /** @var Article $article */
-        $article = $this->dynamap->get('articles', 123);
+        $article = $this->dynamap->get(Article::class, 123);
 
         $this->assertEquals(5., $article->getRating());
     }
@@ -155,13 +168,13 @@ class DynamapTest extends TestCase
         $this->dynamap->save($article);
 
         /** @var Article $article */
-        $article = $this->dynamap->get('articles', 123);
+        $article = $this->dynamap->get(Article::class, 123);
 
         $article->setName('Hello John!');
         $this->dynamap->save($article);
 
         /** @var Article $article */
-        $article = $this->dynamap->get('articles', 123);
+        $article = $this->dynamap->get(Article::class, 123);
 
         $this->assertEquals('Hello John!', $article->getName());
     }
@@ -172,14 +185,14 @@ class DynamapTest extends TestCase
         $this->dynamap->save($article);
 
         /** @var Article $article */
-        $article = $this->dynamap->get('articles', 123);
+        $article = $this->dynamap->get(Article::class, 123);
         $this->assertFalse($article->isPublished());
 
         $article->publish();
         $this->dynamap->save($article);
 
         /** @var Article $article */
-        $article = $this->dynamap->get('articles', 123);
+        $article = $this->dynamap->get(Article::class, 123);
         $this->assertTrue($article->isPublished());
     }
 
@@ -188,7 +201,7 @@ class DynamapTest extends TestCase
         $this->dynamap->save(new Article(123));
 
         /** @var Article $article */
-        $article = $this->dynamap->get('articles', 123);
+        $article = $this->dynamap->get(Article::class, 123);
 
         $this->assertEqualsWithDelta(new \DateTimeImmutable, $article->getCreationDate(), 5);
     }
@@ -198,20 +211,20 @@ class DynamapTest extends TestCase
         // Test it works with a default null value
         $this->dynamap->save(new Article(123));
         /** @var Article $article */
-        $article = $this->dynamap->get('articles', 123);
+        $article = $this->dynamap->get(Article::class, 123);
         $this->assertNull($article->getPublicationDate());
 
         // Test that it works when we set a value
         $article->publish();
         $this->dynamap->save($article);
         /** @var Article $article */
-        $article = $this->dynamap->get('articles', 123);
+        $article = $this->dynamap->get(Article::class, 123);
         $this->assertEqualsWithDelta(new \DateTimeImmutable, $article->getPublicationDate(), 5);
 
         // And it still works when we set null again
         $article->unpublish();
         $this->dynamap->save($article);
-        $article = $this->dynamap->get('articles', 123);
+        $article = $this->dynamap->get(Article::class, 123);
         $this->assertNull($article->getPublicationDate());
     }
 }

@@ -23,11 +23,11 @@ class TableMapping
     /** @var Field[] */
     private $fields = [];
 
-    public function __construct(PropertyInfoExtractorInterface $propertyInfo, string $tableName, array $mappingConfig)
+    public function __construct(PropertyInfoExtractorInterface $propertyInfo, string $className, array $mappingConfig)
     {
         $this->propertyInfo = $propertyInfo;
-        $this->tableName = $tableName;
-        $this->className = (string) $mappingConfig['class'];
+        $this->className = $className;
+        $this->tableName = (string) $mappingConfig['table'];
 
         $this->readProperties($this->className, $mappingConfig['keys']);
     }
@@ -76,6 +76,10 @@ class TableMapping
 
     private function readProperties(string $className, array $keys): void
     {
+        if (! class_exists($className)) {
+            throw new \Exception("The class `$className` doesn't exist");
+        }
+
         $class = new \ReflectionClass($className);
         foreach ($class->getProperties() as $propertyReflection) {
             if ($propertyReflection->isStatic()) {

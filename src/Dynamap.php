@@ -13,12 +13,12 @@ class Dynamap
     private $dynamoDb;
 
     /** @var Mapping */
-    private $mappingObj;
+    private $mapping;
 
     public function __construct(DynamoDbClient $dynamoDb, array $mapping)
     {
         $this->dynamoDb = $dynamoDb;
-        $this->mappingObj = new Mapping($mapping);
+        $this->mapping = new Mapping($mapping);
     }
 
     public static function fromOptions(array $options, array $mapping): self
@@ -28,13 +28,15 @@ class Dynamap
         return new static(new DynamoDbClient($options), $mapping);
     }
 
-    public function getAll(string $table): array
+    public function getAll(string $class): array
     {
+        $tableMapping = $this->mapping->getTableMapping($class);
+
         $items = $this->dynamoDb->scan([
-            'TableName' => $table,
+            'TableName' => $tableMapping->getTableName(),
         ])['Items'];
 
-        return $this->mapList($items, $table);
+        return $this->mapList($items, $tableMapping);
     }
 
     /**
@@ -46,13 +48,11 @@ class Dynamap
      * @throws \InvalidArgumentException If the key is invalid.
      * @throws ItemNotFound If the item cannot be found.
      */
-    public function get(string $table, $key): object
+    public function get(string $class, $key): object
     {
-        $item = $this->find($table, $key);
-
+        $item = $this->find($class, $key);
         if ($item === null) {
-            $tableMapping = $this->mappingObj->getTableMapping($table);
-            throw ItemNotFound::fromKey($tableMapping->getClassName(), $key);
+            throw ItemNotFound::fromKey($class, $key);
         }
 
         return $item;
@@ -66,9 +66,10 @@ class Dynamap
      * @param int|string|array $key
      * @throws \InvalidArgumentException If the key is invalid.
      */
-    public function find(string $table, $key): ?object
+    public function find(string $class, $key): ?object
     {
-        $tableMapping = $this->mappingObj->getTableMapping($table);
+        $tableMapping = $this->mapping->getTableMapping($class);
+        $table = $tableMapping->getTableName();
 
         try {
             $item = $this->dynamoDb->getItem([
@@ -86,13 +87,13 @@ class Dynamap
             return null;
         }
 
-        return $this->map($item, $table);
+        return $this->map($item, $tableMapping);
     }
 
     public function save(object $object): void
     {
         $reflectedObject = new \ReflectionObject($object);
-        $tableMapping = $this->mappingObj->getTableFromClassName($reflectedObject->getName());
+        $tableMapping = $this->mapping->getTableMapping($reflectedObject->getName());
 
         $item = [];
         foreach ($tableMapping->getKeyMapping() as $fieldMapping) {
@@ -131,9 +132,9 @@ class Dynamap
      * @param array $values Key-value map
      * @throws \Exception
      */
-    public function partialUpdate(string $table, $itemKey, array $values): void
+    public function partialUpdate(string $class, $itemKey, array $values): void
     {
-        $tableMapping = $this->mappingObj->getTableMapping($table);
+        $tableMapping = $this->mapping->getTableMapping($class);
 
         $key = $this->buildKeyQuery($itemKey, $tableMapping);
 
@@ -148,24 +149,22 @@ class Dynamap
         $updateExpression = 'set ' . implode(', ', $updateExpressionParts);
 
         $this->dynamoDb->updateItem([
-            'TableName' => $table,
+            'TableName' => $tableMapping->getTableName(),
             'Key' => $key,
             'UpdateExpression' => $updateExpression,
             'ExpressionAttributeValues' => $updateValues,
         ]);
     }
 
-    private function mapList(array $items, string $table): array
+    private function mapList(array $items, TableMapping $tableMapping): array
     {
-        return array_map(function (array $item) use ($table) {
-            return $this->map($item, $table);
+        return array_map(function (array $item) use ($tableMapping) {
+            return $this->map($item, $tableMapping);
         }, $items);
     }
 
-    private function map(array $item, string $table): object
+    private function map(array $item, TableMapping $tableMapping): object
     {
-        $tableMapping = $this->mappingObj->getTableMapping($table);
-
         $class = new \ReflectionClass($tableMapping->getClassName());
         $object = $class->newInstanceWithoutConstructor();
 
