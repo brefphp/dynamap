@@ -31,7 +31,7 @@ class Dynamap
 
     public function getTable(string $className): Table
     {
-        if (!isset($this->tables[$className])) {
+        if (! isset($this->tables[$className])) {
             $tableMapping = $this->mapping->getTableMapping($className);
             $this->tables[$className] = new Table($this->dynamoDb, $tableMapping);
         }
