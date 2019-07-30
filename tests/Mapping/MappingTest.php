@@ -4,6 +4,8 @@ namespace Dynamap\Test\Mapping;
 
 use Dynamap\Mapping\Exception\NoTableSpeficiedException;
 use Dynamap\Mapping\Mapping;
+use Dynamap\Test\Fixture\Article;
+use Dynamap\Test\Fixture\Author;
 use PHPUnit\Framework\TestCase;
 
 class MappingTest extends TestCase
@@ -29,12 +31,13 @@ class MappingTest extends TestCase
                 [
                     'name' => 'my_table',
                     'mappings' => [
-                        'Some\\Class\\FQCN' => []
+                        Article::class => [],
+                        Author::class => []
                     ]
                 ]
             ]
         ]);
 
-        $this->assertSame('my_table', $mapping->getTableFor('Some\\Class\\FQCN'));
+        $this->assertSame('my_table', $mapping->getTableFor(Article::class));
     }
 }

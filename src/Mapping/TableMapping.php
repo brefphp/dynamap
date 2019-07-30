@@ -22,7 +22,7 @@ final class TableMapping
     {
         $this->tableName = $tableName;
 
-        $this->classMappings[] = $classMapping;
+        $this->classMappings = $classMapping;
     }
 
     public static function fromArray(array $config): TableMapping

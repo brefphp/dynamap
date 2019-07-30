@@ -10,12 +10,11 @@ final class Mapping
     /**
      * @var array
      */
-    private $mapping;
+    private $mapping = [];
 
     private function __construct(array $mapping)
     {
         var_dump($mapping);
-//        $this->mapping = $this->convertConfigToMapping($mapping);
     }
 
     public static function fromConfigArray(array $config)
