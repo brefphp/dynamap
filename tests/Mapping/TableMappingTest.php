@@ -5,6 +5,7 @@ namespace Dynamap\Test\Mapping;
 use Dynamap\Mapping\Exception\TableNameNotSpecifiedException;
 use Dynamap\Mapping\Exception\MappingNotSpeficiedException;
 use Dynamap\Mapping\TableMapping;
+use Dynamap\Test\Fixture\Article;
 use PHPUnit\Framework\TestCase;
 
 class TableMappingTest extends TestCase
@@ -30,7 +31,7 @@ class TableMappingTest extends TestCase
         $mapping = TableMapping::fromArray([
             'name' => 'my_table',
             'mappings' => [
-                'Some\\Class\\FQCN' => []
+                Article::class => []
             ]
         ]);
 

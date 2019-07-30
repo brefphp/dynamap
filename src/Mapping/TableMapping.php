@@ -18,7 +18,7 @@ final class TableMapping
      */
     private $classMappings = [];
 
-    private function __construct(string $tableName, ClassMapping $classMapping)
+    private function __construct(string $tableName, array $classMapping)
     {
         $this->tableName = $tableName;
 
@@ -35,9 +35,10 @@ final class TableMapping
             throw new MappingNotSpeficiedException('You must provide at least one class mapping for the table ' . $config['name']);
         }
 
-        $classMappings = array_reduce($config['mappings'], static function ($carry, $item) {
-            // todo: add class mappings
-        }, []);
+        $classMappings = [];
+        foreach ($config['mappings'] as $className => $mapping) {
+            $classMappings[] = ClassMapping::fromArray($className, $mapping);
+        }
 
         return new static($config['name'], $classMappings);
     }
