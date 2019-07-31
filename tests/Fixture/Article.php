@@ -16,6 +16,9 @@ class Article
     /** @var bool */
     private $published = false;
 
+    /** @var int */
+    private $numComments = 0;
+
     /** @var \DateTimeImmutable */
     private $createdAt;
 

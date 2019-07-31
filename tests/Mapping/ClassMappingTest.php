@@ -4,6 +4,7 @@ namespace Dynamap\Test\Mapping;
 
 use Dynamap\Mapping\ClassMapping;
 use Dynamap\Mapping\Exception\ClassNameInvalidException;
+use Dynamap\Mapping\Exception\CannotMapNonExistentFieldException;
 use Dynamap\Test\Fixture\Article;
 use PHPUnit\Framework\TestCase;
 
@@ -13,6 +14,18 @@ class ClassMappingTest extends TestCase
     {
         $this->expectException(ClassNameInvalidException::class);
         ClassMapping::fromArray('UnknownClass', []);
+    }
+
+    public function test non existent fields cannot be mapped(): void
+    {
+        $mapping = [
+            'fields' => [
+                'non_existent_field' => 'string'
+            ]
+        ];
+
+        $this->expectException(CannotMapNonExistentFieldException::class);
+        ClassMapping::fromArray(Article::class, $mapping);
     }
 
     public function test fields are mapped(): void
