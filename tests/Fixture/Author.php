@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Dynamap\Test\Fixture;
 
@@ -14,10 +13,6 @@ class Author
     /** @var Article[] */
     private $articles = [];
 
-    /**
-     * Author constructor.
-     * @param string $name
-     */
     public function __construct(string $name)
     {
         $this->name = $name;

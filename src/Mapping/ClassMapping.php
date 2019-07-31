@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Dynamap\Mapping;
 
@@ -7,13 +7,9 @@ use Dynamap\Mapping\Exception\ClassNameInvalidException;
 
 class ClassMapping
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $className;
-    /**
-     * @var array
-     */
+    /** @var array */
     private $config;
 
     private function __construct(string $className, array $config)
@@ -24,11 +20,11 @@ class ClassMapping
 
     public static function fromArray(string $className, array $config): ClassMapping
     {
-        if (false === \class_exists($className)) {
+        if (\class_exists($className) === false) {
             throw new ClassNameInvalidException('Could not map ' . $className . ' as the class was not found');
         }
 
-        if (false === empty($config['fields'])) {
+        if (empty($config['fields']) === false) {
             self::validateMappedProperties($className, $config['fields']);
         }
 
@@ -36,7 +32,6 @@ class ClassMapping
     }
 
     /**
-     * @param string $className
      * @param array $fields
      * @throws CannotMapNonExistentFieldException
      * @throws \ReflectionException
@@ -51,7 +46,7 @@ class ClassMapping
         }, []);
 
         foreach ($fields as $mappedField => $type) {
-            if (false === \in_array($mappedField, $classProperties)) {
+            if (\in_array($mappedField, $classProperties) === false) {
                 throw new CannotMapNonExistentFieldException('The field ' . $mappedField . ' does not exist in ' . $className);
             }
         }

@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Dynamap\Test\Mapping;
 
-use Dynamap\Mapping\Exception\TableNameNotSpecifiedException;
 use Dynamap\Mapping\Exception\MappingNotSpecifiedException;
+use Dynamap\Mapping\Exception\TableNameNotSpecifiedException;
 use Dynamap\Mapping\TableMapping;
 use Dynamap\Test\Fixture\Article;
 use PHPUnit\Framework\TestCase;
@@ -21,7 +21,7 @@ class TableMappingTest extends TestCase
         $this->expectException(MappingNotSpecifiedException::class);
         TableMapping::fromArray(
             [
-                'name' => 'my_table'
+                'name' => 'my_table',
             ]
         );
     }
@@ -31,8 +31,8 @@ class TableMappingTest extends TestCase
         $mapping = TableMapping::fromArray([
             'name' => 'my_table',
             'mappings' => [
-                Article::class => []
-            ]
+                Article::class => [],
+            ],
         ]);
 
         $this->assertSame('my_table', $mapping->getTableName());

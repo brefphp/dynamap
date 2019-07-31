@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Dynamap\Test\Mapping;
 
@@ -20,7 +20,7 @@ class MappingTest extends TestCase
     {
         $this->expectException(NoTableSpeficiedException::class);
         Mapping::fromConfigArray([
-            'tables' => []
+            'tables' => [],
         ]);
     }
 
@@ -32,10 +32,10 @@ class MappingTest extends TestCase
                     'name' => 'my_table',
                     'mappings' => [
                         Article::class => [],
-                        Author::class => []
-                    ]
-                ]
-            ]
+                        Author::class => [],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertSame('my_table', $mapping->getTableFor(Article::class));

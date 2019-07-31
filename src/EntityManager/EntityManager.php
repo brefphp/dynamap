@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Dynamap\EntityManager;
 
@@ -7,14 +7,10 @@ use Dynamap\Mapping;
 
 final class EntityManager
 {
-    /**
-     * @var Mapping
-     */
+    /** @var Mapping */
     private $mapping;
 
-    /**
-     * @var DynamoDbClient
-     */
+    /** @var DynamoDbClient */
     private $client;
 
     public function __construct(DynamoDbClient $client, Mapping $mapping)

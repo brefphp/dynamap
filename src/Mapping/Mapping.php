@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Dynamap\Mapping;
 
@@ -7,9 +6,7 @@ use Dynamap\Mapping\Exception\NoTableSpeficiedException;
 
 final class Mapping
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $mapping = [];
 
     private function __construct(array $mapping)
@@ -19,7 +16,7 @@ final class Mapping
 
     public static function fromConfigArray(array $config)
     {
-        if (false === \array_key_exists('tables', $config) || empty($config['tables'])) {
+        if (\array_key_exists('tables', $config) === false || empty($config['tables'])) {
             throw new NoTableSpeficiedException('Dynamap needs at least one table to work with!');
         }
 

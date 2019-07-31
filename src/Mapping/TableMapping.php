@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Dynamap\Mapping;
 
@@ -8,14 +7,10 @@ use Dynamap\Mapping\Exception\TableNameNotSpecifiedException;
 
 final class TableMapping
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $tableName;
 
-    /**
-     * @var ClassMapping[];
-     */
+    /** @var ClassMapping[]; */
     private $classMappings = [];
 
     private function __construct(string $tableName, array $classMapping)
@@ -27,11 +22,11 @@ final class TableMapping
 
     public static function fromArray(array $config): TableMapping
     {
-        if (false === \array_key_exists('name', $config)) {
+        if (\array_key_exists('name', $config) === false) {
             throw new TableNameNotSpecifiedException('The table name must be specified');
         }
 
-        if (false === \array_key_exists('mappings', $config) || true === empty($config['mappings'])) {
+        if (\array_key_exists('mappings', $config) === false || empty($config['mappings']) === true) {
             throw new MappingNotSpecifiedException('You must provide at least one class mapping for the table ' . $config['name']);
         }
 
