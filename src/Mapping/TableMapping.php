@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Dynamap\Mapping;
 
-use Dynamap\Mapping\Exception\MappingNotSpeficiedException;
+use Dynamap\Mapping\Exception\MappingNotSpecifiedException;
 use Dynamap\Mapping\Exception\TableNameNotSpecifiedException;
 
 final class TableMapping
@@ -32,7 +32,7 @@ final class TableMapping
         }
 
         if (false === \array_key_exists('mappings', $config) || true === empty($config['mappings'])) {
-            throw new MappingNotSpeficiedException('You must provide at least one class mapping for the table ' . $config['name']);
+            throw new MappingNotSpecifiedException('You must provide at least one class mapping for the table ' . $config['name']);
         }
 
         $classMappings = [];
