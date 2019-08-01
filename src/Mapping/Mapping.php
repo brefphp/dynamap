@@ -11,7 +11,7 @@ final class Mapping
 
     private function __construct(array $mapping)
     {
-        var_dump($mapping);
+//        var_dump($mapping);
     }
 
     public static function fromConfigArray(array $config)

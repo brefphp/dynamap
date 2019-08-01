@@ -22,7 +22,7 @@ abstract class Field
      */
     public function readFieldValue(array $item, string $fieldName)
     {
-        $rawDynamoDbValue = $item[$fieldName][$this->dynamoDbType()];
+        $rawDynamoDbValue = $item[$fieldName][$this->getDynamoDbType()];
 
         return $this->castValueFromDynamoDbFormat($rawDynamoDbValue);
     }
@@ -33,11 +33,11 @@ abstract class Field
     public function dynamoDbQueryValue($fieldValue): array
     {
         return [
-            $this->dynamoDbType() => $this->castValueForDynamoDbFormat($fieldValue),
+            $this->getDynamoDbType() => $this->castValueForDynamoDbFormat($fieldValue),
         ];
     }
 
-    abstract protected function dynamoDbType(): string;
+    abstract protected function getDynamoDbType(): string;
 
     /**
      * @param mixed $value

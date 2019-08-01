@@ -4,7 +4,7 @@ namespace Dynamap\Field;
 
 class StringField extends Field
 {
-    public function dynamoDbType(): string
+    public function getDynamoDbType(): string
     {
         return 'S';
     }

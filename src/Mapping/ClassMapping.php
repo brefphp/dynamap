@@ -10,22 +10,24 @@ class ClassMapping
     /** @var string */
     private $className;
     /** @var array */
-    private $config;
+    private $mapping;
 
     private function __construct(string $className, array $config)
     {
         $this->className = $className;
-        $this->config = $config;
+        $this->mapping = $config;
     }
 
     public static function fromArray(string $className, array $config): ClassMapping
     {
-        if (\class_exists($className) === false) {
+        if (false === \class_exists($className)) {
             throw new ClassNameInvalidException('Could not map ' . $className . ' as the class was not found');
         }
 
-        if (empty($config['fields']) === false) {
-            self::validateMappedProperties($className, $config['fields']);
+        if (false === empty($config['fields'])) {
+            $fields = self::mapProperties($className, $config['fields']);
+
+            $config['fields'] = $fields;
         }
 
         return new static($className, $config);
@@ -36,7 +38,7 @@ class ClassMapping
      * @throws CannotMapNonExistentFieldException
      * @throws \ReflectionException
      */
-    private static function validateMappedProperties(string $className, array $fields): void
+    private static function mapProperties(string $className, array $fields): array
     {
         $reflection = new \ReflectionClass($className);
 
@@ -45,10 +47,17 @@ class ClassMapping
             return $carry;
         }, []);
 
-        foreach ($fields as $mappedField => $type) {
-            if (\in_array($mappedField, $classProperties) === false) {
-                throw new CannotMapNonExistentFieldException('The field ' . $mappedField . ' does not exist in ' . $className);
+        $mappedFields = [];
+        foreach ($fields as $classField => $type) {
+            if (\in_array($classField, $classProperties) === false) {
+                throw new CannotMapNonExistentFieldException('The field ' . $classField . ' does not exist in ' . $className);
             }
+
+            $mappedFields[$classField] = $factory->getType($type);
         }
+
+
+
+        return $fields;
     }
 }

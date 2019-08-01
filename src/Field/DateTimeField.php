@@ -4,7 +4,7 @@ namespace Dynamap\Field;
 
 class DateTimeField extends Field
 {
-    public function dynamoDbType(): string
+    public function getDynamoDbType(): string
     {
         // Dates are stored as strings
         return 'S';

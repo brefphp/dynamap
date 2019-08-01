@@ -41,5 +41,11 @@ class ClassMappingTest extends TestCase
         ];
 
         $classMapping = ClassMapping::fromArray(Article::class, $mapping);
+
+        $this->assertSame('S', $classMapping->getMappedProperty('id')->getDynamoDBType());
+        $this->assertSame('S', $classMapping->getMappedProperty('name')->getDynamoDBType());
+        $this->assertSame('S', $classMapping->getMappedProperty('createdAt')->getDynamoDBType());
+        $this->assertSame('N', $classMapping->getMappedProperty('rating')->getDynamoDBType());
+        $this->assertSame('N', $classMapping->getMappedProperty('numComments')->getDynamoDBType());
     }
 }
