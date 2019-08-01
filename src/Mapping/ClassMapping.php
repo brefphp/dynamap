@@ -2,8 +2,11 @@
 
 namespace Dynamap\Mapping;
 
+use Dynamap\Mapping\Field\DynamoDBField;
 use Dynamap\Mapping\Exception\CannotMapNonExistentFieldException;
 use Dynamap\Mapping\Exception\ClassNameInvalidException;
+use Dynamap\Mapping\Exception\MappingNotFoundException;
+use Dynamap\Mapping\Exception\NoFieldsMappedForClassException;
 
 class ClassMapping
 {
@@ -33,8 +36,28 @@ class ClassMapping
         return new static($className, $config);
     }
 
+    public function getClassName(): string
+    {
+        return $this->className;
+    }
+
+    public function getMappedProperty(string $propertyName): DynamoDBField
+    {
+        if (true === empty($this->mapping['fields'])) { // todo: add a test for this
+            throw new NoFieldsMappedForClassException('You have tried to access mapping for a class which has no mapped properties');
+        }
+
+        if (false === \array_key_exists($propertyName, $this->mapping['fields'])) {
+            throw new MappingNotFoundException('Mapping for ' . $propertyName . ' could not be found');
+        }
+
+        return $this->mapping['fields'][$propertyName];
+    }
+
     /**
+     * @param string $className
      * @param array $fields
+     * @return array
      * @throws CannotMapNonExistentFieldException
      * @throws \ReflectionException
      */
@@ -48,16 +71,16 @@ class ClassMapping
         }, []);
 
         $mappedFields = [];
+        $factory = new FieldMappingFactory();
+
         foreach ($fields as $classField => $type) {
-            if (\in_array($classField, $classProperties) === false) {
+            if (false === \in_array($classField, $classProperties, false)) {
                 throw new CannotMapNonExistentFieldException('The field ' . $classField . ' does not exist in ' . $className);
             }
 
-            $mappedFields[$classField] = $factory->getType($type);
+            $mappedFields[$classField] = $factory->getDynamoDbType($type);
         }
 
-
-
-        return $fields;
+        return $mappedFields;
     }
 }

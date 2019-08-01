@@ -37,15 +37,17 @@ class ClassMappingTest extends TestCase
                 'createdAt' => 'datetime',
                 'rating' => 'float',
                 'numComments' => 'integer',
+                'published' => 'bool'
             ],
         ];
 
         $classMapping = ClassMapping::fromArray(Article::class, $mapping);
 
-        $this->assertSame('S', $classMapping->getMappedProperty('id')->getDynamoDBType());
-        $this->assertSame('S', $classMapping->getMappedProperty('name')->getDynamoDBType());
-        $this->assertSame('S', $classMapping->getMappedProperty('createdAt')->getDynamoDBType());
-        $this->assertSame('N', $classMapping->getMappedProperty('rating')->getDynamoDBType());
-        $this->assertSame('N', $classMapping->getMappedProperty('numComments')->getDynamoDBType());
+        $this->assertSame('S', $classMapping->getMappedProperty('id')->getDynamoDBFieldType());
+        $this->assertSame('S', $classMapping->getMappedProperty('name')->getDynamoDBFieldType());
+        $this->assertSame('S', $classMapping->getMappedProperty('createdAt')->getDynamoDBFieldType());
+        $this->assertSame('N', $classMapping->getMappedProperty('rating')->getDynamoDBFieldType());
+        $this->assertSame('N', $classMapping->getMappedProperty('numComments')->getDynamoDBFieldType());
+        $this->assertSame('BOOL', $classMapping->getMappedProperty('published')->getDynamoDBFieldType());
     }
 }

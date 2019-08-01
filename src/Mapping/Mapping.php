@@ -2,6 +2,7 @@
 
 namespace Dynamap\Mapping;
 
+use Dynamap\Mapping\Exception\ClassNameInvalidException;
 use Dynamap\Mapping\Exception\NoTableSpeficiedException;
 
 final class Mapping
@@ -11,7 +12,7 @@ final class Mapping
 
     private function __construct(array $mapping)
     {
-//        var_dump($mapping);
+        $this->mapping = $mapping;
     }
 
     public static function fromConfigArray(array $config)
@@ -26,5 +27,22 @@ final class Mapping
         }, []);
 
         return new static($mapping);
+    }
+
+    public function getTableFor(string $className): string
+    {
+        // todo: add a test for this
+        if (false === \class_exists($className)) {
+            throw new ClassNameInvalidException('Get table for ' . $className . ' as the class was not found');
+        }
+
+        foreach ($this->mapping as $mappedTable) {
+            if ($mappedTable->containsMappingForClass($className)) {
+                return $mappedTable->getTableName();
+            }
+        }
+
+        // todo: add a test for this
+        throw new ClassNotMappedException('The class ' . $className . ' was not found in the mapping configuration');
     }
 }

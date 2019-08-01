@@ -4,7 +4,7 @@ namespace Dynamap\Field;
 
 class BooleanField extends Field
 {
-    public function getDynamoDbType(): string
+    public function dynamoDbType(): string
     {
         return 'BOOL';
     }

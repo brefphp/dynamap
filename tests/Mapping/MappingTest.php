@@ -6,6 +6,7 @@ use Dynamap\Mapping\Exception\NoTableSpeficiedException;
 use Dynamap\Mapping\Mapping;
 use Dynamap\Test\Fixture\Article;
 use Dynamap\Test\Fixture\Author;
+use Dynamap\Test\Fixture\Tag;
 use PHPUnit\Framework\TestCase;
 
 class MappingTest extends TestCase
@@ -35,9 +36,19 @@ class MappingTest extends TestCase
                         Author::class => [],
                     ],
                 ],
+                [
+                    // if you're thinking about using mulitple tables, go back and read the AWS docs on why you shouldn't.
+                    // then (and only then) come back and think about if you actually _really_ do want to do this.
+                    'name' => 'other_table',
+                    'mappings' => [
+                        Tag::class => []
+                    ]
+                ]
             ],
         ]);
 
-//        $this->assertSame('my_table', $mapping->getTableFor(Article::class));
+        $this->assertSame('my_table', $mapping->getTableFor(Article::class));
+        $this->assertSame('my_table', $mapping->getTableFor(Author::class));
+        $this->assertSame('other_table', $mapping->getTableFor(Tag::class));
     }
 }

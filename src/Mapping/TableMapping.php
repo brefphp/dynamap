@@ -42,4 +42,16 @@ final class TableMapping
     {
         return $this->tableName;
     }
+
+    // todo: add a test for this method
+    public function containsMappingForClass(string $className): bool
+    {
+        foreach ($this->classMappings as $classMapping) {
+            if ($className === $classMapping->getClassName()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

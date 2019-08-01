@@ -4,7 +4,7 @@ namespace Dynamap\Field;
 
 class IntegerField extends Field
 {
-    public function getDynamoDbType(): string
+    public function dynamoDbType(): string
     {
         return 'N';
     }
