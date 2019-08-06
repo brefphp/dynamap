@@ -3,20 +3,38 @@
 namespace Dynamap\EntityManager;
 
 use Aws\DynamoDb\DynamoDbClient;
-use Dynamap\Mapping;
+use Dynamap\Mapping\Mapping;
+use Dynamap\Serializer\EntitySerializer;
 
 final class EntityManager
 {
-    /** @var Mapping */
-    private $mapping;
-
     /** @var DynamoDbClient */
     private $client;
+    /**
+     * @var EntitySerializer
+     */
+    private $serializer;
 
-    public function __construct(DynamoDbClient $client, Mapping $mapping)
+    public function __construct(DynamoDbClient $client, EntitySerializer $serializer)
     {
-        $this->mapping = $mapping;
         $this->client = $client;
+
+        $this->serializer = $serializer;
+    }
+
+    public function persist($entity): void
+    {
+
+    }
+
+    public function fetch($entity): object
+    {
+
+    }
+
+    public function delete($entity): void
+    {
+
     }
 
     // create

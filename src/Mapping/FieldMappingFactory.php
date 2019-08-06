@@ -21,7 +21,7 @@ class FieldMappingFactory
             case 'integer':
                 return new NumberField();
                 break;
-            case 'bool':
+            case 'boolean':
                 return new BooleanField();
                 break;
             default: // todo: add a test for this

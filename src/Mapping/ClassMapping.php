@@ -47,11 +47,21 @@ class ClassMapping
             throw new NoFieldsMappedForClassException('You have tried to access mapping for a class which has no mapped properties');
         }
 
-        if (false === \array_key_exists($propertyName, $this->mapping['fields'])) {
+        if (false === $this->hasMappedProperty($propertyName)) {
             throw new MappingNotFoundException('Mapping for ' . $propertyName . ' could not be found');
         }
 
         return $this->mapping['fields'][$propertyName];
+    }
+
+    public function hasMappedProperty(string $propertyName): bool
+    {
+        // todo: add a test for this
+        if (false === \array_key_exists('fields', $this->mapping)) {
+            return false;
+        }
+
+        return \array_key_exists($propertyName, $this->mapping['fields']);
     }
 
     /**

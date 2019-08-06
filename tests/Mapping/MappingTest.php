@@ -51,4 +51,25 @@ class MappingTest extends TestCase
         $this->assertSame('my_table', $mapping->getTableFor(Author::class));
         $this->assertSame('other_table', $mapping->getTableFor(Tag::class));
     }
+
+    public function test a property mapping status can be queried()
+    {
+        $mapping = Mapping::fromConfigArray([
+            'tables' => [
+                [
+                    'name' => 'my_table',
+                    'mappings' => [
+                        Article::class => [
+                            'fields' => [
+                                'id' => 'integer'
+                            ]
+                        ]
+                    ],
+                ]
+            ],
+        ]);
+
+        $this->assertTrue($mapping->isClassPropertyMapped(Article::class, 'id'));
+        $this->assertFalse($mapping->isClassPropertyMapped(Article::class, 'other_field'));
+    }
 }

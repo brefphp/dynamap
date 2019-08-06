@@ -2,8 +2,10 @@
 
 namespace Dynamap\Mapping;
 
+use Dynamap\Mapping\Exception\MappingNotFoundException;
 use Dynamap\Mapping\Exception\MappingNotSpecifiedException;
 use Dynamap\Mapping\Exception\TableNameNotSpecifiedException;
+use Dynamap\Mapping\Field\DynamoDBField;
 
 final class TableMapping
 {
@@ -53,5 +55,36 @@ final class TableMapping
         }
 
         return false;
+    }
+
+    public function isClassPropertyMapped(string $className, string $propertyName): bool
+    {
+        // todo: add a test for this
+        if (false === $this->containsMappingForClass($className)) {
+            return false;
+        }
+
+        foreach ($this->classMappings as $classMapping) {
+            if ($classMapping->getClassName() === $className) {
+                return $classMapping->hasMappedProperty($propertyName);
+            }
+        }
+
+        return false;
+    }
+
+    // todo: add a test for this
+    public function getTypeFor(string $className, string $propertyName): DynamoDBField
+    {
+        if (false === $this->isClassPropertyMapped($className, $propertyName)) {
+            // todo: is this the right exception class?
+            throw new MappingNotFoundException('Property ' . $propertyName . ' is not mapped');
+        }
+
+        foreach($this->classMappings as $classMapping) {
+            if($classMapping->getClassName() === $className) {
+                return $classMapping->getMappedProperty($propertyName);
+            }
+        }
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Dynamap\Test\Fixture;
 
+use Ramsey\Uuid\Uuid;
+
 class Article
 {
     /** @var int */
@@ -25,8 +27,11 @@ class Article
     /** @var \DateTimeImmutable|null */
     private $publishedAt;
 
-    public function __construct(int $id)
+    public function __construct($id = null)
     {
+        if (null === $id) {
+            $id = Uuid::uuid4();
+        }
         $this->id = $id;
         $this->createdAt = new \DateTimeImmutable;
     }
@@ -81,5 +86,13 @@ class Article
     public function getPublicationDate(): ?\DateTimeImmutable
     {
         return $this->publishedAt;
+    }
+
+    public function setNumComments(int $numComments): void {
+        $this->numComments = $numComments;
+    }
+
+    public function setRating(float $rating): void {
+        $this->rating = $rating;
     }
 }

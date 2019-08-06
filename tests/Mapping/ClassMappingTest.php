@@ -37,7 +37,7 @@ class ClassMappingTest extends TestCase
                 'createdAt' => 'datetime',
                 'rating' => 'float',
                 'numComments' => 'integer',
-                'published' => 'bool'
+                'published' => 'boolean'
             ],
         ];
 
