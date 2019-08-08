@@ -13,7 +13,7 @@ class ClassMappingTest extends TestCase
     public function test an exception is thrown when the fqcn is invalid(): void
     {
         $this->expectException(ClassNameInvalidException::class);
-        ClassMapping::fromArray('UnknownClass', []);
+        ClassMapping::fromArray('my_table', 'UnknownClass', []);
     }
 
     public function test non existent fields cannot be mapped(): void
@@ -25,7 +25,7 @@ class ClassMappingTest extends TestCase
         ];
 
         $this->expectException(CannotMapNonExistentFieldException::class);
-        ClassMapping::fromArray(Article::class, $mapping);
+        ClassMapping::fromArray('my_table', Article::class, $mapping);
     }
 
     public function test fields are mapped(): void
@@ -41,7 +41,7 @@ class ClassMappingTest extends TestCase
             ],
         ];
 
-        $classMapping = ClassMapping::fromArray(Article::class, $mapping);
+        $classMapping = ClassMapping::fromArray('my_table', Article::class, $mapping);
 
         $this->assertSame('S', $classMapping->getMappedProperty('id')->getDynamoDBFieldType());
         $this->assertSame('S', $classMapping->getMappedProperty('name')->getDynamoDBFieldType());

@@ -8,7 +8,7 @@ use Dynamap\Mapping\Exception\NoTableSpeficiedException;
 
 final class Mapping
 {
-    /** @var array */
+    /** @var ClassMapping[] */
     private $mapping = [];
 
     private function __construct(array $mapping)
@@ -16,14 +16,16 @@ final class Mapping
         $this->mapping = $mapping;
     }
 
-    public static function fromConfigArray(array $config)
+    public static function fromConfigArray(array $config): self
     {
         if (\array_key_exists('tables', $config) === false || empty($config['tables'])) {
             throw new NoTableSpeficiedException('Dynamap needs at least one table to work with!');
         }
 
         $mapping = \array_reduce($config['tables'], static function ($carry, $item) {
-            $carry[] = TableMapping::fromArray($item);
+            foreach ($item['mappings'] as $classname => $properties) {
+                $carry[] = ClassMapping::fromArray($item['name'], $classname, $properties);
+            }
             return $carry;
         }, []);
 
@@ -37,9 +39,9 @@ final class Mapping
             throw new ClassNameInvalidException('Could not get table for ' . $className . ' as the class was not found');
         }
 
-        foreach ($this->mapping as $mappedTable) {
-            if ($mappedTable->containsMappingForClass($className)) {
-                return $mappedTable->getTableName();
+        foreach ($this->mapping as $mapping) {
+            if ($mapping->getClassName() === $className) {
+                return $mapping->getTableName();
             }
         }
 
@@ -54,9 +56,9 @@ final class Mapping
             return false;
         }
 
-        foreach ($this->mapping as $mappedTable) {
-            if ($mappedTable->containsMappingForClass($className)) {
-                return $mappedTable->isClassPropertyMapped($className, $propertyName);
+        foreach ($this->mapping as $mapping) {
+            if ($mapping->getClassName() === $className) {
+                return $mapping->hasMappedProperty($propertyName);
             }
         }
 
@@ -70,11 +72,15 @@ final class Mapping
             throw new MappingNotFoundException('Mapping for ' . $propertyName . ' could not be found');
         }
 
-        foreach ($this->mapping as $mappedTable) {
-            if ($mappedTable->containsMappingForClass($className)) {
-                if (true === $mappedTable->isClassPropertyMapped($className, $propertyName)) {
-                    return $mappedTable->getTypeFor($className, $propertyName);
+        foreach ($this->mapping as $mapping) {
+            if ($mapping->getClassName() === $className) {
+
+                if (false === $mapping->hasMappedProperty($propertyName)) {
+                    // todo: is this the right exception class? add a test for this
+                    throw new MappingNotFoundException('Property ' . $propertyName . ' is not mapped');
                 }
+
+                return $mapping->getMappedProperty($propertyName);
             }
         }
     }

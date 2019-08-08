@@ -10,18 +10,23 @@ use Dynamap\Mapping\Exception\NoFieldsMappedForClassException;
 
 class ClassMapping
 {
+    /**
+     * @var string
+     */
+    private $tableName;
     /** @var string */
     private $className;
     /** @var array */
     private $mapping;
 
-    private function __construct(string $className, array $config)
+    private function __construct(string $tableName, string $className, array $config)
     {
         $this->className = $className;
         $this->mapping = $config;
+        $this->tableName = $tableName;
     }
 
-    public static function fromArray(string $className, array $config): ClassMapping
+    public static function fromArray(string $tableName, string $className, array $config): ClassMapping
     {
         if (false === \class_exists($className)) {
             throw new ClassNameInvalidException('Could not map ' . $className . ' as the class was not found');
@@ -33,12 +38,17 @@ class ClassMapping
             $config['fields'] = $fields;
         }
 
-        return new static($className, $config);
+        return new static($tableName, $className, $config);
     }
 
     public function getClassName(): string
     {
         return $this->className;
+    }
+
+    public function getTableName(): string
+    {
+        return $this->tableName;
     }
 
     public function getMappedProperty(string $propertyName): DynamoDBField

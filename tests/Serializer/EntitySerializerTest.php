@@ -42,17 +42,18 @@ class EntitySerializerTest extends TestCase
         $uuid = Uuid::uuid4();
 
         $article = new Article($uuid);
-        $article->setName('Test article');
+        $article->setName('Test Article');
         $article->setNumComments(5);
         $article->setRating(3.8);
         $article->publish();
 
         $result = $serializer->serialize($article);
+
         $this->assertSame($result['Article_id'], $uuid->toString());
         $this->assertSame($result['Article_name'], 'Test Article');
         $this->assertSame($result['Article_numComments'], 5);
         $this->assertSame($result['Article_rating'], 3.8);
         $this->assertTrue($result['Article_published']);
-        $this->assertSame($result['Article_publishedAt'], $article->getPublicationDate());
+        $this->assertSame($result['Article_publishedAt'], $article->getPublicationDate()->format(\DateTime::ATOM));
     }
 }

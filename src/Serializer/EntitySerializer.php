@@ -2,6 +2,7 @@
 
 namespace Dynamap\Serializer;
 
+use Dynamap\Mapping\Field\StringField;
 use Dynamap\Mapping\Mapping;
 
 class EntitySerializer
@@ -28,15 +29,18 @@ class EntitySerializer
                 $properties[$reflection->getShortName() . '_' . $property->getName()] = $this->transform($entity, $property);
             }
         }
-        var_dump($properties);
+
         return $properties;
     }
 
-    private function transform($entity, $property) {
+    private function transform($entity, $property)
+    {
         $type = $this->mapping->getTypeFor(\get_class($entity), $property->getName());
 
+        return $type->castToDynamoDBType($property->getValue($entity));
 
-
+        var_dump($type);
+//        var_dump((string)$property->getValue($entity));
         return $property->getValue($entity);
     }
 }
