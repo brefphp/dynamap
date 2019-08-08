@@ -29,7 +29,7 @@ class Article
 
     public function __construct($id = null)
     {
-        if (null === $id) {
+        if ($id === null) {
             $id = Uuid::uuid4();
         }
         $this->id = $id;
@@ -88,11 +88,13 @@ class Article
         return $this->publishedAt;
     }
 
-    public function setNumComments(int $numComments): void {
+    public function setNumComments(int $numComments): void
+    {
         $this->numComments = $numComments;
     }
 
-    public function setRating(float $rating): void {
+    public function setRating(float $rating): void
+    {
         $this->rating = $rating;
     }
 }

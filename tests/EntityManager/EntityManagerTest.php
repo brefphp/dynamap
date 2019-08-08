@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Dynamap\Test\EntityManager;
 
@@ -7,19 +7,14 @@ use Dynamap\EntityManager\EntityManager;
 use Dynamap\Mapping\Mapping;
 use Dynamap\Serializer\EntitySerializer;
 use Dynamap\Test\Fixture\Article;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-
-;
 
 class EntityManagerTest extends TestCase
 {
-    /**
-     * @var DynamoDbClient|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DynamoDbClient|MockObject */
     private $client;
-    /**
-     * @var EntitySerializer
-     */
+    /** @var EntitySerializer */
     private $serializer;
 
     protected function setUp(): void
@@ -33,12 +28,12 @@ class EntityManagerTest extends TestCase
                         'mappings' => [
                             Article::class => [
                                 'keys' => [
-                                    'id' => 'integer'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                    'id' => 'integer',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ])
         );
     }
@@ -47,7 +42,7 @@ class EntityManagerTest extends TestCase
     {
         $em = new EntityManager($this->client, $this->serializer);
 
-        $article = new Article();
+        $article = new Article;
 
         $em->persist($article);
         $this->assertSame(1, 1);

@@ -4,9 +4,7 @@ namespace Dynamap\Mapping\Field;
 
 class StringField implements DynamoDBField
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $originalFieldType;
 
     public function __construct(string $originalFieldType)

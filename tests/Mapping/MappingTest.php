@@ -41,9 +41,9 @@ class MappingTest extends TestCase
                     // then (and only then) come back and think about if you actually _really_ do want to do this.
                     'name' => 'other_table',
                     'mappings' => [
-                        Tag::class => []
-                    ]
-                ]
+                        Tag::class => [],
+                    ],
+                ],
             ],
         ]);
 
@@ -61,11 +61,11 @@ class MappingTest extends TestCase
                     'mappings' => [
                         Article::class => [
                             'fields' => [
-                                'id' => 'integer'
-                            ]
-                        ]
+                                'id' => 'integer',
+                            ],
+                        ],
                     ],
-                ]
+                ],
             ],
         ]);
 

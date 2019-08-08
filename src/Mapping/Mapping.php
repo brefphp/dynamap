@@ -35,7 +35,7 @@ final class Mapping
     public function getTableFor(string $className): string
     {
         // todo: add a test for this
-        if (false === \class_exists($className)) {
+        if (\class_exists($className) === false) {
             throw new ClassNameInvalidException('Could not get table for ' . $className . ' as the class was not found');
         }
 
@@ -52,7 +52,7 @@ final class Mapping
     public function isClassPropertyMapped(string $className, string $propertyName): bool
     {
         // todo: add a test for this
-        if (false === \class_exists($className)) {
+        if (\class_exists($className) === false) {
             return false;
         }
 
@@ -68,14 +68,13 @@ final class Mapping
     // todo: add a test for this
     public function getTypeFor(string $className, string $propertyName)
     {
-        if (false === $this->isClassPropertyMapped($className, $propertyName)) {
+        if ($this->isClassPropertyMapped($className, $propertyName) === false) {
             throw new MappingNotFoundException('Mapping for ' . $propertyName . ' could not be found');
         }
 
         foreach ($this->mapping as $mapping) {
             if ($mapping->getClassName() === $className) {
-
-                if (false === $mapping->hasMappedProperty($propertyName)) {
+                if ($mapping->hasMappedProperty($propertyName) === false) {
                     // todo: is this the right exception class? add a test for this
                     throw new MappingNotFoundException('Property ' . $propertyName . ' is not mapped');
                 }

@@ -1,12 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Dynamap\Mapping\Field;
 
 class DateTimeField implements DynamoDBField
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $originalFieldType;
 
     public function __construct(string $originalFieldType)

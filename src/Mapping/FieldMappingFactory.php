@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Dynamap\Mapping;
 
@@ -13,7 +13,7 @@ class FieldMappingFactory
     public function getDynamoDBType(string $propertyType): DynamoDBField
     {
         switch (strtolower($propertyType)) {
-            case 'uuid' :
+            case 'uuid':
             case 'string':
                 return new StringField($propertyType);
                 break;
@@ -22,13 +22,13 @@ class FieldMappingFactory
                 return new NumberField($propertyType);
                 break;
             case 'boolean':
-                return new BooleanField();
+                return new BooleanField;
                 break;
             case 'datetime':
                 return new DateTimeField($propertyType);
                 break;
             default: // todo: add a test for this
-                throw new InvalidMappingTypeException();
+                throw new InvalidMappingTypeException;
         }
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Dynamap\Test\Serializer;
 
@@ -26,12 +26,12 @@ class EntitySerializerTest extends TestCase
                                 'numComments' => 'integer',
                                 'rating' => 'float',
                                 'published' => 'boolean',
-                                'publishedAt' => 'datetime'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'publishedAt' => 'datetime',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
     }
 

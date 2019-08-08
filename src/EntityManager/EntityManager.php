@@ -3,16 +3,13 @@
 namespace Dynamap\EntityManager;
 
 use Aws\DynamoDb\DynamoDbClient;
-use Dynamap\Mapping\Mapping;
 use Dynamap\Serializer\EntitySerializer;
 
 final class EntityManager
 {
     /** @var DynamoDbClient */
     private $client;
-    /**
-     * @var EntitySerializer
-     */
+    /** @var EntitySerializer */
     private $serializer;
 
     public function __construct(DynamoDbClient $client, EntitySerializer $serializer)
@@ -24,17 +21,14 @@ final class EntityManager
 
     public function persist($entity): void
     {
-
     }
 
     public function fetch($entity): object
     {
-
     }
 
     public function delete($entity): void
     {
-
     }
 
     // create
