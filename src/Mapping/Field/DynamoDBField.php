@@ -8,5 +8,5 @@ interface DynamoDBField
 
     public function getDynamoDBFieldType(): string;
 
-    public function castToDynamoDBType($value): void;
+    public function castToDynamoDBType($value);
 }

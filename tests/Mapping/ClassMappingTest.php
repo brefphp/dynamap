@@ -16,18 +16,6 @@ class ClassMappingTest extends TestCase
         ClassMapping::fromArray('my_table', 'UnknownClass', []);
     }
 
-    public function test non existent fields cannot be mapped(): void
-    {
-        $mapping = [
-            'fields' => [
-                'non_existent_field' => 'string',
-            ],
-        ];
-
-        $this->expectException(CannotMapNonExistentFieldException::class);
-        ClassMapping::fromArray('my_table', Article::class, $mapping);
-    }
-
     public function test fields are mapped(): void
     {
         $mapping = [
@@ -49,5 +37,17 @@ class ClassMappingTest extends TestCase
         $this->assertSame('N', $classMapping->getMappedProperty('rating')->getDynamoDBFieldType());
         $this->assertSame('N', $classMapping->getMappedProperty('numComments')->getDynamoDBFieldType());
         $this->assertSame('BOOL', $classMapping->getMappedProperty('published')->getDynamoDBFieldType());
+    }
+
+    public function test non existent fields cannot be mapped(): void
+    {
+        $mapping = [
+            'fields' => [
+                'non_existent_field' => 'string',
+            ],
+        ];
+
+        $this->expectException(CannotMapNonExistentFieldException::class);
+        ClassMapping::fromArray('my_table', Article::class, $mapping);
     }
 }
