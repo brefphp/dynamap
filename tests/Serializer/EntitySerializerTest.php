@@ -56,4 +56,20 @@ class EntitySerializerTest extends TestCase
         $this->assertTrue($result['Article_published']);
         $this->assertSame($result['Article_publishedAt'], $article->getPublicationDate()->format(\DateTime::ATOM));
     }
+
+    public function test an entity has non mapped properties serialized(): void
+    {
+        $serializer = new EntitySerializer($this->mapping);
+
+        $uuid = Uuid::uuid4();
+        $authorComment = 'This is a really great article about some tech thing';
+
+        $article = new Article($uuid);
+        $article->setName('Test article with unmapped data...');
+        $article->setAuthorComment($authorComment);
+
+        $result = $serializer->serialize($article);
+
+        $this->assertSame($authorComment, $result['Article_authorComment']);
+    }
 }

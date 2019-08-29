@@ -22,8 +22,14 @@ class EntitySerializer
         $reflection = new \ReflectionObject($entity);
         foreach ($reflection->getProperties() as $property) {
             $property->setAccessible(true);
+            if (null === $property->getValue($entity)) {
+                # todo: add a test for this
+                continue;
+            }
             if ($this->mapping->isClassPropertyMapped($className, $property->getName()) === true) {
                 $properties[$reflection->getShortName() . '_' . $property->getName()] = $this->transform($entity, $property);
+            } else {
+                $properties[$reflection->getShortName() . '_' . $property->getName()] = $property->getValue($entity);
             }
         }
 

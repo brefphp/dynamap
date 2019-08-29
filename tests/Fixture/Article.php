@@ -27,6 +27,8 @@ class Article
     /** @var \DateTimeImmutable|null */
     private $publishedAt;
 
+    private $authorComment;
+
     public function __construct($id = null)
     {
         if ($id === null) {
@@ -96,5 +98,15 @@ class Article
     public function setRating(float $rating): void
     {
         $this->rating = $rating;
+    }
+
+    public function setAuthorComment(string $comment): void
+    {
+        $this->authorComment = $comment;
+    }
+
+    public function getAuthorComment(): ?string
+    {
+        return $this->authorComment;
     }
 }
