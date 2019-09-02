@@ -49,12 +49,12 @@ class EntitySerializerTest extends TestCase
 
         $result = $serializer->serialize($article);
 
-        $this->assertSame($result['Article_id'], $uuid->toString());
-        $this->assertSame($result['Article_name'], 'Test Article');
-        $this->assertSame($result['Article_numComments'], 5);
-        $this->assertSame($result['Article_rating'], 3.8);
-        $this->assertTrue($result['Article_published']);
-        $this->assertSame($result['Article_publishedAt'], $article->getPublicationDate()->format(\DateTime::ATOM));
+        $this->assertSame($result['Dynamap\Test\Fixture\Article_id'], $uuid->toString());
+        $this->assertSame($result['Dynamap\Test\Fixture\Article_name'], 'Test Article');
+        $this->assertSame($result['Dynamap\Test\Fixture\Article_numComments'], 5);
+        $this->assertSame($result['Dynamap\Test\Fixture\Article_rating'], 3.8);
+        $this->assertTrue($result['Dynamap\Test\Fixture\Article_published']);
+        $this->assertSame($result['Dynamap\Test\Fixture\Article_publishedAt'], $article->getPublicationDate()->format(\DateTime::ATOM));
     }
 
     public function test an entity has non mapped properties serialized(): void
@@ -70,6 +70,33 @@ class EntitySerializerTest extends TestCase
 
         $result = $serializer->serialize($article);
 
-        $this->assertSame($authorComment, $result['Article_authorComment']);
+        $this->assertSame($authorComment, $result['Dynamap\Test\Fixture\Article_authorComment']);
+    }
+
+    public function test an entity is_unserialized(): void
+    {
+        $serializer = new EntitySerializer($this->mapping);
+        $uuid = Uuid::uuid4();
+
+        $article = new Article($uuid);
+        $article->setName('Test Article');
+        $article->setNumComments(5);
+        $article->setRating(3.8);
+        $article->setAuthorComment('This is a really great article about some tech thing');
+        $article->publish();
+
+        $serializedArticle = $serializer->serialize($article);
+
+        $result = $serializer->unserialize($serializedArticle);
+
+        $this->assertEquals($article->getId(), $result->getId());
+        $this->assertSame($article->getName(), $result->getName());
+        $this->assertSame($article->getNumComments(), $result->getNumComments());
+        $this->assertSame($article->getRating(), $result->getRating());
+        $this->assertSame($article->getAuthorComment(), $result->getAuthorComment());
+        $this->assertEquals(
+            $article->getPublicationDate()->format(\DATE_ATOM),
+            $result->getPublicationDate()->format(\DATE_ATOM)
+        );
     }
 }

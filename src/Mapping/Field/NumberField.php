@@ -26,4 +26,9 @@ class NumberField implements DynamoDBField
     {
         return $value;
     }
+
+    public function restoreFromDynamoDBType($value)
+    {
+        return $value;
+    }
 }

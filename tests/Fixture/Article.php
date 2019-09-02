@@ -38,7 +38,7 @@ class Article
         $this->createdAt = new \DateTimeImmutable;
     }
 
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
@@ -85,7 +85,7 @@ class Article
         $this->publishedAt = $publishedAt;
     }
 
-    public function getPublicationDate(): ?\DateTimeImmutable
+    public function getPublicationDate(): ?\DateTimeInterface
     {
         return $this->publishedAt;
     }
@@ -93,6 +93,11 @@ class Article
     public function setNumComments(int $numComments): void
     {
         $this->numComments = $numComments;
+    }
+
+    public function getNumComments(): ?int
+    {
+        return $this->numComments;
     }
 
     public function setRating(float $rating): void

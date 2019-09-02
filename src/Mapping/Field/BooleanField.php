@@ -14,9 +14,13 @@ class BooleanField implements DynamoDBField
         return 'boolean';
     }
 
-
     public function castToDynamoDBType($value): bool
     {
         return $value;
+    }
+
+    public function restoreFromDynamoDBType($value): bool
+    {
+        return (bool) $value;
     }
 }

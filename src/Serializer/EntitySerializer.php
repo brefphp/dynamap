@@ -27,13 +27,43 @@ class EntitySerializer
                 continue;
             }
             if ($this->mapping->isClassPropertyMapped($className, $property->getName()) === true) {
-                $properties[$reflection->getShortName() . '_' . $property->getName()] = $this->transform($entity, $property);
+                $properties[$reflection->getName() . '_' . $property->getName()] = $this->transform($entity, $property);
             } else {
-                $properties[$reflection->getShortName() . '_' . $property->getName()] = $property->getValue($entity);
+                $properties[$reflection->getName() . '_' . $property->getName()] = $property->getValue($entity);
             }
         }
 
         return $properties;
+    }
+
+    public function unserialize(array $serialized): object
+    {
+
+        $objects = [];
+
+        foreach ($serialized as $key => $value) {
+
+            $prefixLength = \strpos($key, '_');
+            $className = \substr($key, 0, $prefixLength);
+            $propertyName = \substr($key, $prefixLength + 1);
+
+            if (false === \in_array($className, $objects)) {
+                $objects[] = $className;
+                $concretion = (new \ReflectionClass($className))->newInstance();
+                $reflection = new \ReflectionClass($className);
+            }
+
+            $property = $reflection->getProperty($propertyName);
+            $property->setAccessible(true);
+
+            if ($this->mapping->isClassPropertyMapped($className, $propertyName) === true) {
+                $value = $this->untransform($concretion, $propertyName, $value);
+            }
+
+            $property->setValue($concretion, $value);
+        }
+
+        return $concretion;
     }
 
     private function transform($entity, $property)
@@ -41,5 +71,11 @@ class EntitySerializer
         $type = $this->mapping->getTypeFor(\get_class($entity), $property->getName());
 
         return $type->castToDynamoDBType($property->getValue($entity));
+    }
+
+    private function untransform($entity, $property, $value) {
+        $type = $this->mapping->getTypeFor(\get_class($entity), $property);
+
+        return $type->restoreFromDynamoDBType($value);
     }
 }

@@ -9,4 +9,6 @@ interface DynamoDBField
     public function getDynamoDBFieldType(): string;
 
     public function castToDynamoDBType($value);
+
+    public function restoreFromDynamoDBType($value);
 }

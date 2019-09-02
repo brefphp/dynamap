@@ -26,4 +26,9 @@ class DateTimeField implements DynamoDBField
     {
         return $value->format(\DateTime::ATOM);
     }
+
+    public function restoreFromDynamoDBType($value): \DateTimeInterface
+    {
+        return \DateTime::createFromFormat(\DateTime::ATOM, $value);
+    }
 }
