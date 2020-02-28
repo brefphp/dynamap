@@ -86,17 +86,28 @@ class TableMapping
                 continue;
             }
             $property = $propertyReflection->getName();
+            $propertyType = $propertyReflection->getType();
 
-            $propertyTypes = $this->propertyInfo->getTypes($className, $property);
-            if (empty($propertyTypes)) {
-                throw new \Exception("Type not recognized for {$className}::\${$property}");
-            }
-            if (count($propertyTypes) > 1) {
-                throw new \Exception("Too many types for {$className}::\${$property}");
+            if (!$propertyType) {
+                $propertyTypes = $this->propertyInfo->getTypes($className, $property);
+                if (empty($propertyTypes)) {
+                    throw new \Exception("Type not recognized for {$className}::\${$property}");
+                }
+                if (count($propertyTypes) > 1) {
+                    throw new \Exception("Too many types for {$className}::\${$property}");
+                }
+                $builtinType = $propertyTypes[0]->getBuiltinType();
+                if ($builtinType === 'object') {
+                    $propertyTypeClassName = $propertyTypes[0]->getClassName();
+                } else {
+                    $propertyTypeClassName = null;
+                }
+            } else {
+                $builtinType = $propertyType->isBuiltin() ? $propertyType->getName() : 'object';
+                $propertyTypeClassName = $propertyType->getName();
             }
 
-            $propertyType = $propertyTypes[0];
-            switch ($propertyType->getBuiltinType()) {
+            switch ($builtinType) {
                 case 'string':
                     $fieldMapping = new StringField($property);
                     break;
@@ -110,18 +121,18 @@ class TableMapping
                     $fieldMapping = new BooleanField($property);
                     break;
                 case 'object':
-                    switch ($propertyType->getClassName()) {
+                    switch ($propertyTypeClassName) {
                         case \DateTime::class:
                         case \DateTimeImmutable::class:
                         case \DateTimeInterface::class:
                             $fieldMapping = new DateTimeField($property);
                             break;
                         default:
-                            throw new \Exception("Unsupported type {$propertyType->getClassName()} for {$className}::\${$property}");
+                            throw new \Exception("Unsupported type {$propertyTypeClassName} for {$className}::\${$property}");
                     }
                     break;
                 default:
-                    throw new \Exception("Unsupported type {$propertyType->getBuiltinType()} for {$className}::\${$property}");
+                    throw new \Exception("Unsupported type {$builtinType} for {$className}::\${$property}");
             }
 
             if (in_array($property, $keys, true)) {

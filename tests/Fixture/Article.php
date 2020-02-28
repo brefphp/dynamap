@@ -2,6 +2,8 @@
 
 namespace Dynamap\Test\Fixture;
 
+use DateTimeImmutable;
+
 class Article
 {
     /** @var int */
@@ -16,16 +18,19 @@ class Article
     /** @var bool */
     private $published = false;
 
-    /** @var \DateTimeImmutable */
+    /** @var DateTimeImmutable */
     private $createdAt;
 
-    /** @var \DateTimeImmutable|null */
+    /** @var DateTimeImmutable|null */
     private $publishedAt;
+
+    private DateTimeImmutable $deletedAt;
 
     public function __construct(int $id)
     {
         $this->id = $id;
-        $this->createdAt = new \DateTimeImmutable;
+        $this->createdAt = new DateTimeImmutable;
+        $this->deletedAt = new DateTimeImmutable;
     }
 
     public function getId(): int
@@ -51,7 +56,7 @@ class Article
     public function publish(): void
     {
         $this->published = true;
-        $this->publishedAt = new \DateTimeImmutable;
+        $this->publishedAt = new DateTimeImmutable;
     }
 
     public function unpublish()
@@ -65,18 +70,28 @@ class Article
         return $this->published;
     }
 
-    public function getCreationDate(): \DateTimeImmutable
+    public function getCreationDate(): DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setPublicationDate(?\DateTimeImmutable $publishedAt): void
+    public function setPublicationDate(?DateTimeImmutable $publishedAt): void
     {
         $this->publishedAt = $publishedAt;
     }
 
-    public function getPublicationDate(): ?\DateTimeImmutable
+    public function getPublicationDate(): ?DateTimeImmutable
     {
         return $this->publishedAt;
+    }
+
+    public function setDeletionDate(DateTimeImmutable $deletedAt): void
+    {
+        $this->deletedAt = $deletedAt;
+    }
+
+    public function getDeletionDate(): DateTimeImmutable
+    {
+        return $this->deletedAt;
     }
 }

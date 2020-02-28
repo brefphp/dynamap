@@ -98,6 +98,9 @@ class Table
         foreach ($this->mapping->getFieldsMapping() as $fieldMapping) {
             $property = $reflectedObject->getProperty($fieldMapping->name());
             $property->setAccessible(true);
+            if (! $property->isInitialized($object)) {
+                throw new \Exception("Cannot save object of type {$reflectedObject->getName()} because the property \${$property->getName()} is typed and it was not initialized to a valid value. Did you forget to give it a value in the constructor? Or maybe did you forget to set it to `null` by default?");
+            }
             $fieldValue = $property->getValue($object);
             // If the value is null we skip sending it (we cannot explicitly send null)
             if ($fieldValue !== null) {

@@ -227,4 +227,14 @@ class DynamapTest extends TestCase
         $article = $this->dynamap->get(Article::class, 123);
         $this->assertNull($article->getPublicationDate());
     }
+
+    public function test typed property(): void
+    {
+        $this->dynamap->save(new Article(123));
+
+        /** @var Article $article */
+        $article = $this->dynamap->get(Article::class, 123);
+
+        $this->assertEqualsWithDelta(new \DateTimeImmutable, $article->getDeletionDate(), 5);
+    }
 }
