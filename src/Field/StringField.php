@@ -12,7 +12,7 @@ class StringField extends Field
     /**
      * {@inheritdoc}
      */
-    protected function castValueForDynamoDbFormat($value): string
+    protected function castValueForDynamoDbFormat(mixed $value): string
     {
         return (string) $value;
     }
@@ -20,7 +20,7 @@ class StringField extends Field
     /**
      * {@inheritdoc}
      */
-    protected function castValueFromDynamoDbFormat($value): string
+    protected function castValueFromDynamoDbFormat(mixed $value): string
     {
         return (string) $value;
     }

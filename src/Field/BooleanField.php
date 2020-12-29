@@ -12,7 +12,7 @@ class BooleanField extends Field
     /**
      * {@inheritdoc}
      */
-    protected function castValueForDynamoDbFormat($value): bool
+    protected function castValueForDynamoDbFormat(mixed $value): bool
     {
         return (bool) $value;
     }
@@ -20,7 +20,7 @@ class BooleanField extends Field
     /**
      * {@inheritdoc}
      */
-    protected function castValueFromDynamoDbFormat($value): bool
+    protected function castValueFromDynamoDbFormat(mixed $value): bool
     {
         return (bool) $value;
     }

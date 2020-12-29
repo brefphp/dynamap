@@ -12,7 +12,7 @@ class IntegerField extends Field
     /**
      * {@inheritdoc}
      */
-    protected function castValueForDynamoDbFormat($value): string
+    protected function castValueForDynamoDbFormat(mixed $value): string
     {
         // Numbers should be sent as strings to DynamoDB
         return (string) $value;
@@ -21,7 +21,7 @@ class IntegerField extends Field
     /**
      * {@inheritdoc}
      */
-    protected function castValueFromDynamoDbFormat($value): int
+    protected function castValueFromDynamoDbFormat(mixed $value): int
     {
         return (int) $value;
     }

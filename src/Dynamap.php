@@ -4,17 +4,15 @@ namespace Dynamap;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Dynamap\Exception\ItemNotFound;
+use Exception;
+use InvalidArgumentException;
 
 class Dynamap
 {
-    /** @var DynamoDbClient */
-    private $dynamoDb;
-
-    /** @var Mapping */
-    private $mapping;
-
+    private DynamoDbClient $dynamoDb;
+    private Mapping $mapping;
     /** @var Table[] */
-    private $tables = [];
+    private array $tables = [];
 
     public function __construct(DynamoDbClient $dynamoDb, array $mapping)
     {
@@ -49,11 +47,10 @@ class Dynamap
      *
      * Throws an exception if the item cannot be found (see `find()` as an alternative).
      *
-     * @param int|string|array $key
-     * @throws \InvalidArgumentException If the key is invalid.
+     * @throws InvalidArgumentException If the key is invalid.
      * @throws ItemNotFound If the item cannot be found.
      */
-    public function get(string $class, $key): object
+    public function get(string $class, array|int|string $key): object
     {
         return $this->getTable($class)->get($key);
     }
@@ -63,10 +60,9 @@ class Dynamap
      *
      * Returns null if the item cannot be found (see `get()` as an alternative).
      *
-     * @param int|string|array $key
-     * @throws \InvalidArgumentException If the key is invalid.
+     * @throws InvalidArgumentException If the key is invalid.
      */
-    public function find(string $class, $key): ?object
+    public function find(string $class, array|int|string $key): ?object
     {
         return $this->getTable($class)->find($key);
     }
@@ -82,11 +78,10 @@ class Dynamap
      * Warning: if the item has been loaded as a PHP object, the PHP object will not be updated.
      * If you want it to be updated you will need to reload it from database.
      *
-     * @param int|string|array $itemKey
      * @param array $values Key-value map
-     * @throws \Exception
+     * @throws Exception
      */
-    public function partialUpdate(string $class, $itemKey, array $values): void
+    public function partialUpdate(string $class, array|int|string $itemKey, array $values): void
     {
         $this->getTable($class)->partialUpdate($itemKey, $values);
     }

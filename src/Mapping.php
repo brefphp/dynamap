@@ -10,9 +10,8 @@ use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 class Mapping
 {
     /** @var array|TableMapping[] */
-    private $tables;
-    /** @var PropertyInfoExtractor|null */
-    private $propertyInfo;
+    private array $tables;
+    private ?PropertyInfoExtractor $propertyInfo = null;
 
     public function __construct(array $mappingConfig)
     {

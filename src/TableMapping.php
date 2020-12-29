@@ -12,16 +12,13 @@ use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
 
 class TableMapping
 {
-    /** @var PropertyInfoExtractorInterface */
-    private $propertyInfo;
-    /** @var string */
-    private $tableName;
-    /** @var string */
-    private $className;
+    private PropertyInfoExtractorInterface $propertyInfo;
+    private string $tableName;
+    private string $className;
     /** @var Field[] */
-    private $keys = [];
+    private array $keys = [];
     /** @var Field[] */
-    private $fields = [];
+    private array $fields = [];
 
     public function __construct(PropertyInfoExtractorInterface $propertyInfo, string $className, array $mappingConfig)
     {

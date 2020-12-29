@@ -2,6 +2,8 @@
 
 namespace Dynamap\Field;
 
+use DateTimeInterface;
+
 class DateTimeField extends Field
 {
     public function dynamoDbType(): string
@@ -13,20 +15,20 @@ class DateTimeField extends Field
     /**
      * {@inheritdoc}
      */
-    protected function castValueForDynamoDbFormat($value): string
+    protected function castValueForDynamoDbFormat(mixed $value): string
     {
-        if (! $value instanceof \DateTimeInterface) {
+        if (! $value instanceof DateTimeInterface) {
             throw new \InvalidArgumentException('Expected an instance of DateTimeInterface');
         }
 
-        return $value->format(\DateTimeInterface::ATOM);
+        return $value->format(DateTimeInterface::ATOM);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function castValueFromDynamoDbFormat($value): \DateTimeInterface
+    protected function castValueFromDynamoDbFormat(mixed $value): DateTimeInterface
     {
-        return \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $value);
+        return \DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $value);
     }
 }

@@ -4,8 +4,7 @@ namespace Dynamap\Field;
 
 abstract class Field
 {
-    /** @var string */
-    private $name;
+    private string $name;
 
     public function __construct(string $name)
     {
@@ -17,20 +16,14 @@ abstract class Field
         return $this->name;
     }
 
-    /**
-     * @return mixed
-     */
-    public function readFieldValue(array $item, string $fieldName)
+    public function readFieldValue(array $item, string $fieldName): mixed
     {
         $rawDynamoDbValue = $item[$fieldName][$this->dynamoDbType()];
 
         return $this->castValueFromDynamoDbFormat($rawDynamoDbValue);
     }
 
-    /**
-     * @param mixed $fieldValue
-     */
-    public function dynamoDbQueryValue($fieldValue): array
+    public function dynamoDbQueryValue(mixed $fieldValue): array
     {
         return [
             $this->dynamoDbType() => $this->castValueForDynamoDbFormat($fieldValue),
@@ -39,15 +32,7 @@ abstract class Field
 
     abstract protected function dynamoDbType(): string;
 
-    /**
-     * @param mixed $value
-     * @return mixed
-     */
-    abstract protected function castValueForDynamoDbFormat($value);
+    abstract protected function castValueForDynamoDbFormat(mixed $value): mixed;
 
-    /**
-     * @param mixed $value
-     * @return mixed
-     */
-    abstract protected function castValueFromDynamoDbFormat($value);
+    abstract protected function castValueFromDynamoDbFormat(mixed $value): mixed;
 }

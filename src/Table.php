@@ -6,19 +6,14 @@ use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Dynamap\Exception\ItemNotFound;
 use Dynamap\Exception\TableNotFound;
+use InvalidArgumentException;
 
 class Table
 {
-    /** @var DynamoDbClient */
-    private $dynamoDb;
-
-    /** @var TableMapping */
-    private $mapping;
-
-    public function __construct(DynamoDbClient $dynamoDb, TableMapping $mapping)
-    {
-        $this->dynamoDb = $dynamoDb;
-        $this->mapping = $mapping;
+    public function __construct(
+        private DynamoDbClient $dynamoDb,
+        private TableMapping $mapping
+    ) {
     }
 
     public function getAll(): array
@@ -35,11 +30,10 @@ class Table
      *
      * Throws an exception if the item cannot be found (see `find()` as an alternative).
      *
-     * @param int|string|array $key
-     * @throws \InvalidArgumentException If the key is invalid.
+     * @throws InvalidArgumentException If the key is invalid.
      * @throws ItemNotFound If the item cannot be found.
      */
-    public function get($key): object
+    public function get(array|int|string $key): object
     {
         $item = $this->find($key);
         if ($item === null) {
@@ -54,10 +48,9 @@ class Table
      *
      * Returns null if the item cannot be found (see `get()` as an alternative).
      *
-     * @param int|string|array $key
-     * @throws \InvalidArgumentException If the key is invalid.
+     * @throws InvalidArgumentException If the key is invalid.
      */
-    public function find($key): ?object
+    public function find(array|int|string $key): ?object
     {
         $table = $this->mapping->getTableName();
 
@@ -120,11 +113,10 @@ class Table
      * Warning: if the item has been loaded as a PHP object, the PHP object will not be updated.
      * If you want it to be updated you will need to reload it from database.
      *
-     * @param int|string|array $itemKey
      * @param array $values Key-value map
      * @throws \Exception
      */
-    public function partialUpdate($itemKey, array $values): void
+    public function partialUpdate(array|int|string $itemKey, array $values): void
     {
         $key = $this->buildKeyQuery($itemKey);
 
@@ -173,15 +165,14 @@ class Table
     }
 
     /**
-     * @param int|string|array $key
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    private function buildKeyQuery($key): array
+    private function buildKeyQuery(array|int|string $key): array
     {
         $keyQuery = [];
         if (! is_array($key)) {
             if ($this->mapping->isCompositeKey()) {
-                throw new \InvalidArgumentException('The key is a composite key and only a single value was provided');
+                throw new InvalidArgumentException('The key is a composite key and only a single value was provided');
             }
             foreach ($this->mapping->getKeyMapping() as $fieldMapping) {
                 $keyQuery[$fieldMapping->name()] = $fieldMapping->dynamoDbQueryValue($key);
@@ -190,7 +181,7 @@ class Table
             foreach ($this->mapping->getKeyMapping() as $fieldMapping) {
                 $fieldName = $fieldMapping->name();
                 if (! isset($key[$fieldName])) {
-                    throw new \InvalidArgumentException('The key is incomplete');
+                    throw new InvalidArgumentException('The key is incomplete');
                 }
                 $keyQuery[$fieldName] = $fieldMapping->dynamoDbQueryValue($key[$fieldName]);
             }
