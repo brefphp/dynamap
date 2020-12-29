@@ -22,7 +22,7 @@ class Dynamap
 
     public static function fromOptions(array $options, array $mapping): self
     {
-        $options['version'] = $options['version'] ?? 'latest';
+        $options['version'] ??= 'latest';
 
         return new static(new DynamoDbClient($options), $mapping);
     }
@@ -37,6 +37,11 @@ class Dynamap
         return $this->tables[$className];
     }
 
+    /**
+     * @template T
+     * @param class-string<T> $class
+     * @return T[]
+     */
     public function getAll(string $class): array
     {
         return $this->getTable($class)->getAll();
@@ -47,10 +52,14 @@ class Dynamap
      *
      * Throws an exception if the item cannot be found (see `find()` as an alternative).
      *
+     * @template T
+     * @param class-string<T> $class
+     * @return T
+     *
      * @throws InvalidArgumentException If the key is invalid.
      * @throws ItemNotFound If the item cannot be found.
      */
-    public function get(string $class, array|int|string $key): object
+    public function get(string $class, array | int | string $key): object
     {
         return $this->getTable($class)->get($key);
     }
@@ -60,9 +69,13 @@ class Dynamap
      *
      * Returns null if the item cannot be found (see `get()` as an alternative).
      *
+     * @template T
+     * @param class-string<T> $class
+     * @return T|null
+     *
      * @throws InvalidArgumentException If the key is invalid.
      */
-    public function find(string $class, array|int|string $key): ?object
+    public function find(string $class, array | int | string $key): ?object
     {
         return $this->getTable($class)->find($key);
     }

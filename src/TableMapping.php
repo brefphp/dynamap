@@ -85,7 +85,7 @@ class TableMapping
             $property = $propertyReflection->getName();
             $propertyType = $propertyReflection->getType();
 
-            if (!$propertyType) {
+            if (! $propertyType) {
                 $propertyTypes = $this->propertyInfo->getTypes($className, $property);
                 if (empty($propertyTypes)) {
                     throw new \Exception("Type not recognized for {$className}::\${$property}");

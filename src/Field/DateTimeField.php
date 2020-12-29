@@ -12,9 +12,6 @@ class DateTimeField extends Field
         return 'S';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function castValueForDynamoDbFormat(mixed $value): string
     {
         if (! $value instanceof DateTimeInterface) {
@@ -24,9 +21,6 @@ class DateTimeField extends Field
         return $value->format(DateTimeInterface::ATOM);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function castValueFromDynamoDbFormat(mixed $value): DateTimeInterface
     {
         return \DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $value);

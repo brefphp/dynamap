@@ -9,17 +9,11 @@ class BooleanField extends Field
         return 'BOOL';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function castValueForDynamoDbFormat(mixed $value): bool
     {
         return (bool) $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function castValueFromDynamoDbFormat(mixed $value): bool
     {
         return (bool) $value;
